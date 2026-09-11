@@ -44,7 +44,7 @@ import { worldBorderCommand } from "../commands/settings/world-border";
 import { flyCheckCommand } from "../commands/settings/fly";
 import { afkCommand } from "../commands/settings/afk";
 import { antispamCommand } from "../commands/settings/spam";
-import { pvpCooldownCommand, pvpToggleCommand, pvpToggleCooldownCommand } from "../commands/utility/pvp";
+import { pvpSetCombatCDCommand, pvpToggleCommand, pvpSetToggleCDCommand } from "../commands/utility/pvp";
 import { channelCommand } from "../commands/utility/channels";
 import { hitReachCheckCommand } from "../commands/settings/reach";
 import { autoClickerCommand } from "../commands/settings/autoclicker";
@@ -309,8 +309,9 @@ const allCommands: Command[] = [
     imprisonCommand,
     platformBlockCommand,
     nameSpoofCommand,
-    pvpCooldownCommand,
-    pvpToggleCooldownCommand,
+    pvpSetCombatCDCommand,
+    pvpToggleCommand,
+    pvpSetToggleCDCommand,
     xrayCommand,
     whitelistCommand,
     guiCommand,

@@ -9,50 +9,46 @@ const DYNAMIC_PROP_COOLDOWN = "pvpToggleCooldown";
 const DEFAULT_COOLDOWN_TICKS = 2 * 60 * 20;
 
 /**
- * Converts a given time in seconds to a human-readable string format.
+ * Converts a given duration in seconds to a formatted, human-readable string.
  *
- * @param {number} seconds - The duration in seconds.
- * @returns {string} Human-readable time formatted string.
+ * @param {number} seconds - Total duration in seconds.
+ * @returns {string} Formatted duration string (e.g., "1 hour 5 minutes 10 seconds").
  */
 function formatTime(seconds: number): string {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
 
-    let formattedTime = "";
+    const parts: string[] = [];
 
     if (hours > 0) {
-        formattedTime += `${hours} hour${hours > 1 ? "s" : ""}`;
+        parts.push(`${hours} hour${hours > 1 ? "s" : ""}`);
     }
-
     if (minutes > 0) {
-        if (formattedTime) formattedTime += " ";
-        formattedTime += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+        parts.push(`${minutes} minute${minutes > 1 ? "s" : ""}`);
+    }
+    if (remainingSeconds > 0 || parts.length === 0) {
+        parts.push(`${remainingSeconds} second${remainingSeconds > 1 ? "s" : ""}`);
     }
 
-    if (remainingSeconds > 0 || (hours === 0 && minutes === 0)) {
-        if (formattedTime) formattedTime += " ";
-        formattedTime += `${remainingSeconds} second${remainingSeconds > 1 ? "s" : ""}`;
-    }
-
-    return formattedTime;
+    return parts.join(" ");
 }
 
 /**
- * Parses and validates raw input numerical arguments for cooldown commands.
+ * Validates and extracts a numeric cooldown value in seconds from command arguments.
  *
- * @param {Player} player - The command sender.
- * @param {string[] | undefined} args - Command raw argument strings.
- * @returns {number | undefined} Evaluated cooldown seconds or undefined if invalid.
+ * @param {Player} player - Executing target player.
+ * @param {string[]} [args] - Command arguments array.
+ * @returns {number | undefined} Cooldown value in seconds if valid, otherwise undefined.
  */
 function parseCooldownArgument(player: Player, args?: string[]): number | undefined {
-    if (!args || args.length === 0 || isNaN(Number(args[0]))) {
+    if (!args || args.length === 0) {
         player.sendMessage("§o§c[Paradox] Please provide a valid number for the cooldown time in seconds.");
         return undefined;
     }
 
     const cooldownTime = Number(args[0]);
-    if (cooldownTime < 10 || cooldownTime > 3600) {
+    if (Number.isNaN(cooldownTime) || cooldownTime < 10 || cooldownTime > 3600) {
         player.sendMessage("§o§c[Paradox] Please provide a cooldown time between 10 and 3600 seconds (1 hour).");
         return undefined;
     }
@@ -61,45 +57,51 @@ function parseCooldownArgument(player: Player, args?: string[]): number | undefi
 }
 
 /**
- * Command to set the custom PvP toggle cooldown time.
+ * Configures the required wait time before a player can toggle their personal PvP state again.
  */
-export const pvpToggleCooldownCommand: Command = {
-    name: "pvpToggleCooldown",
-    description: "Set a custom PvP toggle cooldown in seconds.",
-    usage: "{prefix}pvpToggleCooldown <time in seconds>",
-    examples: [`{prefix}pvpToggleCooldown 180`],
+export const pvpSetToggleCDCommand: Command = {
+    name: "pvpSetToggleCD",
+    description: "Configures the toggle cooldown window (CD) required before a player can change their PvP state again.",
+    usage: "{prefix}pvpSetToggleCD <time in seconds>",
+    examples: [`{prefix}pvpSetToggleCD 180`],
     category: "Utility",
     securityClearance: 4,
     icon: "textures/ui/timer.png",
     guiInstructions: {
         formType: "ActionFormData",
-        title: "PvP Toggle Cooldown",
-        description: "Set a custom cooldown time (in seconds) for toggling PvP.\n\n" + "§7• Minimum: 10 seconds\n" + "§7• Maximum: 3600 seconds (1 hour)\n\n",
+        title: "PvP Toggle Cooldown (CD) Window",
+        description:
+            "Sets the server-wide toggle cooldown window (CD) in seconds enforced whenever a player switches their personal PvP status.\n\n" +
+            "§7• Cooldown Window (CD): Establishes a mandatory lockout timer immediately after changing PvP status.\n" +
+            "§7• Purpose: Prevents players from rapidly toggling PvP on and off to bypass combat hazards or exploit safe areas.\n" +
+            "§7• Behavior: The player must wait out this full cooldown window (CD) before toggling their status again.\n" +
+            "§7• Minimum Window: 10 seconds\n" +
+            "§7• Maximum Window: 3600 seconds (1 hour)\n\n",
         commandOrder: "command-arg",
         actions: [
             {
-                name: "Continue",
+                name: "Save Configuration",
                 icon: "textures/ui/check.png",
-                description: "Proceed to set the PvP toggle cooldown.",
+                description: "Save and apply the new PvP toggle cooldown (CD) window.",
                 requiredFields: ["ptc"],
                 generateModalForm: true,
             },
         ],
         dynamicFields: [
             {
-                name: "\nSet Cooldown:",
+                name: "\nSet Toggle Cooldown Window (Seconds):",
                 type: "text",
-                placeholder: "Enter cooldown time",
+                placeholder: "Enter duration (10 - 3600)",
                 requiredFields: ["ptc"],
             },
         ],
     },
 
     /**
-     * Executes the pvpToggleCooldown command.
+     * Executes the pvpSetToggleCD command.
      *
-     * @param {ChatSendBeforeEvent} message - The message event context.
-     * @param {string[]} [args] - Command argument list.
+     * @param {ChatSendBeforeEvent | undefined} message - Chat event context.
+     * @param {string[]} [args] - Command arguments.
      * @returns {Promise<void>}
      */
     execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]): Promise<void> => {
@@ -110,50 +112,56 @@ export const pvpToggleCooldownCommand: Command = {
         if (cooldownTime === undefined) return;
 
         world.setDynamicProperty("customPvPToggleCooldown", cooldownTime * 20);
-        player.sendMessage(`§2[§7Paradox§2]§o§7 PvP toggle cooldown has been set to ${formatTime(cooldownTime)}.`);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 PvP toggle cooldown window (CD) set to ${formatTime(cooldownTime)}.`);
     },
 };
 
 /**
- * Command to set the custom PvP action cooldown time.
+ * Configures the active combat tag duration during player-versus-player engagements.
  */
-export const pvpCooldownCommand: Command = {
-    name: "pvpCooldown",
-    description: "Set a custom PvP action cooldown in seconds.",
-    usage: "{prefix}pvpCooldown <time in seconds>",
-    examples: [`{prefix}pvpCooldown 180`],
+export const pvpSetCombatCDCommand: Command = {
+    name: "pvpSetCombatCD",
+    description: "Configures the active combat cooldown window (CD) applied to players engaged in PvP.",
+    usage: "{prefix}pvpSetCombatCD <time in seconds>",
+    examples: [`{prefix}pvpSetCombatCD 180`],
     category: "Utility",
     securityClearance: 4,
     icon: "textures/ui/icon_timer.png",
     guiInstructions: {
         formType: "ActionFormData",
-        title: "PvP Action Cooldown",
-        description: "Set a custom cooldown time (in seconds) for PvP actions.\n\n" + "§7• Minimum: 10 seconds\n" + "§7• Maximum: 3600 seconds (1 hour)\n\n",
+        title: "PvP Combat Cooldown (CD) Window",
+        description:
+            "Sets the active combat cooldown window (CD) in seconds applied to players involved in player-versus-player combat.\n\n" +
+            "§7• Cooldown Window (CD): Enforces a continuous combat tag duration whenever a player attacks or receives damage.\n" +
+            "§7• Purpose: Holds players in combat state to prevent safe-zone escaping, combat logging, or teleports.\n" +
+            "§7• Behavior: Resets on every incoming or outgoing hit. Players exit combat only after the cooldown window (CD) expires untouched.\n" +
+            "§7• Minimum Window: 10 seconds\n" +
+            "§7• Maximum Window: 3600 seconds (1 hour)\n\n",
         commandOrder: "command-arg",
         actions: [
             {
-                name: "Continue",
+                name: "Save Configuration",
                 icon: "textures/ui/check.png",
-                description: "Proceed to set the PvP action cooldown.",
+                description: "Save and apply the new PvP combat cooldown (CD) window.",
                 requiredFields: ["pac"],
                 generateModalForm: true,
             },
         ],
         dynamicFields: [
             {
-                name: "\nSet Cooldown:",
+                name: "\nSet Combat Cooldown Window (Seconds):",
                 type: "text",
-                placeholder: "Enter cooldown time",
+                placeholder: "Enter duration (10 - 3600)",
                 requiredFields: ["pac"],
             },
         ],
     },
 
     /**
-     * Executes the pvpCooldown command.
+     * Executes the pvpSetCombatCD command.
      *
-     * @param {ChatSendBeforeEvent} message - The message event context.
-     * @param {string[]} [args] - Command argument list.
+     * @param {ChatSendBeforeEvent | undefined} message - Chat event context.
+     * @param {string[]} [args] - Command arguments.
      * @returns {Promise<void>}
      */
     execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]): Promise<void> => {
@@ -165,28 +173,28 @@ export const pvpCooldownCommand: Command = {
 
         world.setDynamicProperty("customPvPCooldown", cooldownTime * 20);
         updateCoolDownTicks();
-        player.sendMessage(`§2[§7Paradox§2]§o§7 PvP action cooldown has been set to ${formatTime(cooldownTime)}.`);
+        player.sendMessage(`§2[§7Paradox§2]§o§7 PvP combat cooldown window (CD) set to ${formatTime(cooldownTime)}.`);
     },
 };
 
 /**
  * Displays current player and global PvP configuration to the user.
  *
- * @param {Player} player - Executing target player.
+ * @param {Player} player - Target receiver player.
  */
 function handleShowStatus(player: Player): void {
     const isPvPEnabled = (player.getDynamicProperty(DYNAMIC_PROP_PVP_ENABLED) as boolean) ?? false;
     const isPvPGlobalEnabled = (world.getDynamicProperty(DYNAMIC_PROP_GLOBAL_PVP) as boolean) ?? world.gameRules.pvp;
 
-    const messageLines = [`§2[§7Paradox§2]§o§7 PvP Status Overview:`, `  | Global PvP: ${isPvPGlobalEnabled ? "§aEnabled§7" : "§4Disabled§7"}`, `  | Your PvP: ${isPvPEnabled ? "§aEnabled§7" : "§4Disabled§7"}`];
+    const statusReport = `§2[§7Paradox§2]§o§7 PvP Status Overview:\n` + `  | Global PvP: ${isPvPGlobalEnabled ? "§aEnabled§7" : "§4Disabled§7"}\n` + `  | Your PvP: ${isPvPEnabled ? "§aEnabled§7" : "§4Disabled§7"}`;
 
-    player.sendMessage(messageLines.join("\n"));
+    player.sendMessage(statusReport);
 }
 
 /**
- * Handles confirmation UI and system teardown when disabling global PvP.
+ * Handles modal dialog confirmation and world options when disabling global PvP.
  *
- * @param {Player} player - Target admin player.
+ * @param {Player} player - Target administrator player.
  */
 function promptDisableGlobalPvP(player: Player): void {
     world.setDynamicProperty(DYNAMIC_PROP_GLOBAL_PVP, false);
@@ -202,8 +210,9 @@ function promptDisableGlobalPvP(player: Player): void {
 
     form.show(player)
         .then((result) => {
-            if (result && result.canceled && result.cancelationReason === "UserBusy") {
-                return promptDisableGlobalPvP(player);
+            if (result?.canceled && result.cancelationReason === "UserBusy") {
+                promptDisableGlobalPvP(player);
+                return;
             }
             if (result?.selection === 0) {
                 world.gameRules.pvp = false;
@@ -219,9 +228,9 @@ function promptDisableGlobalPvP(player: Player): void {
 }
 
 /**
- * Handles server-wide global PvP activation routines.
+ * Enables server-wide global PvP systems and sets relevant world rules.
  *
- * @param {Player} player - Executing admin player.
+ * @param {Player} player - Target administrator player.
  */
 function enableGlobalPvP(player: Player): void {
     world.gameRules.pvp = true;
@@ -231,9 +240,9 @@ function enableGlobalPvP(player: Player): void {
 }
 
 /**
- * Handles processing for global PvP management operations.
+ * Evaluates authority and toggles global server-wide PvP states.
  *
- * @param {Player} player - Executing target player.
+ * @param {Player} player - Target administrator player.
  */
 function handleGlobalToggle(player: Player): void {
     const playerClearance = player.getDynamicProperty("securityClearance") as number;
@@ -251,36 +260,28 @@ function handleGlobalToggle(player: Player): void {
 }
 
 /**
- * Evaluates whether personal player PvP toggle active cooldowns have elapsed.
+ * Checks if a player is currently restricted by the personal PvP toggle cooldown window.
  *
- * @param {Player} player - Executing target player.
- * @param {number} currentTick - Current world system tick index.
- * @returns {boolean} True if toggle cooldown is still active.
+ * @param {Player} player - Player to check.
+ * @param {number} currentTick - Current world tick.
+ * @returns {boolean} True if the toggle cooldown window is still active.
  */
 function isToggleCooldownActive(player: Player, currentTick: number): boolean {
     const lastToggleTick = (player.getDynamicProperty(DYNAMIC_PROP_COOLDOWN) as number) ?? 0;
     const cooldownTicks = (world.getDynamicProperty("customPvPToggleCooldown") as number) ?? DEFAULT_COOLDOWN_TICKS;
+    const elapsedTicks = currentTick - lastToggleTick;
 
-    if (currentTick - lastToggleTick >= cooldownTicks) {
+    if (elapsedTicks >= cooldownTicks) {
         return false;
     }
 
-    const ticksRemaining = cooldownTicks - (currentTick - lastToggleTick);
-    const secondsRemaining = Math.ceil(ticksRemaining / 20);
-
-    let timeMsg = `${secondsRemaining} seconds`;
-    if (secondsRemaining > 60) {
-        const minutes = Math.floor(secondsRemaining / 60);
-        const secs = secondsRemaining % 60;
-        timeMsg = `${minutes} minutes${secs > 0 ? ` and ${secs} seconds` : ""}`;
-    }
-
-    player.sendMessage(`§2[§7Paradox§2]§o§7 You can toggle PvP again in ${timeMsg}.`);
+    const secondsRemaining = Math.ceil((cooldownTicks - elapsedTicks) / 20);
+    player.sendMessage(`§2[§7Paradox§2]§o§7 You can toggle PvP again in ${formatTime(secondsRemaining)}.`);
     return true;
 }
 
 /**
- * Handles toggling personal PvP status state for individual players.
+ * Handles toggling personal PvP status for an individual player.
  *
  * @param {Player} player - Executing target player.
  * @param {number} currentTick - Current world system tick index.
@@ -297,11 +298,11 @@ function handlePersonalToggle(player: Player, currentTick: number): void {
 }
 
 /**
- * Represents the PvP toggle command.
+ * Handles player requests to view or change personal or server-wide PvP states.
  */
 export const pvpToggleCommand: Command = {
     name: "pvp",
-    description: "Toggle PvP mode for yourself, globally, or check the current PvP status.",
+    description: "Toggle PvP mode for yourself, globally, or check current status.",
     specialNote: "* To bypass PvP in safe zones, give the player the tag: paradoxBypassPvPCheck",
     usage: "{prefix}pvp [global | status | help]",
     examples: [`{prefix}pvp`, `{prefix}pvp global`, `{prefix}pvp status`, `{prefix}pvp help`],
@@ -311,7 +312,11 @@ export const pvpToggleCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "PvP Settings",
-        description: "Choose an action to manage your PvP settings or check the server status.\n\n" + "§7• Toggle your own PvP status.\n" + "§7• Toggle global PvP (requires admin clearance).\n" + "§7• Check current PvP status.\n\n",
+        description:
+            "Choose an action to manage your PvP settings or check the server status.\n\n" +
+            "§7• Toggle your personal PvP status.\n" +
+            "§7• Toggle global server PvP (requires admin clearance).\n" +
+            "§7• Check current global and personal PvP settings.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
@@ -326,7 +331,7 @@ export const pvpToggleCommand: Command = {
                 icon: "textures/ui/realms_slot_check.png",
                 securityClearance: 1,
                 command: ["status"],
-                description: "View the current PvP status for yourself and the server.",
+                description: "View current PvP status for yourself and the server.",
             },
             {
                 name: "Toggle Your PvP",
@@ -340,8 +345,8 @@ export const pvpToggleCommand: Command = {
     /**
      * Executes the pvp command.
      *
-     * @param {ChatSendBeforeEvent} message - The message event context.
-     * @param {string[]} [args] - Command argument list.
+     * @param {ChatSendBeforeEvent | undefined} message - Chat event context.
+     * @param {string[]} [args] - Command arguments list.
      * @returns {Promise<void>}
      */
     execute: async (message: ChatSendBeforeEvent | undefined, args?: string[]): Promise<void> => {

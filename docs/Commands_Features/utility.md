@@ -520,10 +520,10 @@ The `pvp` command allows players to control Player vs. Player (PvP) settings. Pl
 ?> Required Clearance Level To Execute: `4` (for global toggle)
 
 ### How It Works
-- **Player PvP Toggle:** Players can enable or disable PvP for themselves. A cooldown prevents frequent toggling.
-- **Global PvP:** Admins can enable or disable PvP for the entire server. Disabling also stops the Paradox PvP management system but the in-game gamerule may need adjustment.
-- **Status Check:** Players can see their PvP status and the server’s global PvP state.
-- **Cooldowns & Penalties:** Logging out during PvP cooldown triggers penalties, including inventory loss. Players are alerted when rejoining.
+- **Player PvP Toggle:** Players can enable or disable PvP for themselves. A rate-limiting toggle cooldown window (CD) prevents rapid status switching.
+- **Global PvP:** Admins can enable or disable PvP for the entire server. Disabling also stops the Paradox PvP management system, though the world's in-game PvP gamerule can optionally be updated as well.
+- **Status Check:** Players can view their personal PvP status alongside the server’s global PvP state.
+- **Cooldowns & Penalties:** Logging out while engaged in active combat during the combat cooldown window (CD) triggers penalties, including inventory loss. Players are alerted when rejoining.
 
 
 > Usage: ":pvp [ global | status | help ]"  
@@ -538,26 +538,36 @@ The `pvp` command allows players to control Player vs. Player (PvP) settings. Pl
 
 ---
 
-## pvpCooldown
+## pvpSetCombatCD
 ### At A Glance
-Admins can set a custom cooldown (in seconds) for PvP actions. The cooldown determines how long players must wait between PvP events.
+Admins can set the active combat cooldown window (CD) in seconds applied to players involved in PvP combat.
+
+### How It Works
+- **Combat Tag Enforcement:** Applies an active combat tag duration whenever a player attacks or receives damage from another player.
+- **Anti-Abuse Protection:** Enforces an uninterrupted combat window to prevent players from fleeing into safe zones, teleports, or combat logging out during fight engagements.
+- **Reset Behavior:** Automatically resets on each hit. Players are only released from combat state after the cooldown window (CD) expires untouched.
 
 
-> Usage: ":pvpCooldown <time in seconds>"  
-> Example: :pvpCooldown 30  
+> Usage: ":pvpSetCombatCD <time in seconds>"  
+> Example: :pvpSetCombatCD 180  
 
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
 
 ---
 
-## pvpToggleCooldown
+## pvpSetToggleCD
 ### At A Glance
-Admins can set a custom cooldown (in seconds) for toggling personal PvP mode. This prevents frequent switching.
+Admins can set the personal PvP toggle cooldown window (CD) in seconds required before a player can change their PvP state again.
+
+### How It Works
+- **Rate-Limiting Lockout:** Establishes a mandatory delay immediately after a player switches their personal PvP status.
+- **Anti-Abuse Protection:** Prevents players from rapidly toggling personal PvP on and off to exploit safe status during combat or item transport.
+- **Lockout Behavior:** Once toggled, players must wait out the entire cooldown window (CD) duration before changing their PvP mode again.
 
 
-> Usage: ":pvpToggleCooldown <time in seconds>"  
-> Example: :pvpToggleCooldown 30  
+> Usage: ":pvpSetToggleCD <time in seconds>"  
+> Example: :pvpSetToggleCD 180  
 
 
 **Limits:** Minimum `10` seconds, Maximum `3600` seconds (1 hour).
