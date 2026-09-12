@@ -308,6 +308,75 @@ function getClampedTargetCoords(loc: Vector3, bounds: BorderBoundsBox, center: {
 }
 
 /**
+ * Computes dimension border bounding box coordinates.
+ *
+ * @param {string} dimensionId - Target dimension identifier
+ * @returns {{ borderSize: number; center: { x: number; z: number }; bounds: BorderBoundsBox }} Bounding box structure
+ */
+function getBorderBoundsBox(dimensionId: string): { borderSize: number; center: { x: number; z: number }; bounds: BorderBoundsBox } {
+    const borderSize = getConfiguredBorder(dimensionId);
+    const center = getDimensionCenter(dimensionId);
+    const bounds: BorderBoundsBox = {
+        minX: center.x - borderSize,
+        maxX: center.x + borderSize,
+        minZ: center.z - borderSize,
+        maxZ: center.z + borderSize,
+    };
+    return { borderSize, center, bounds };
+}
+
+/**
+ * Evaluates initial evaluation conditions to skip processing early.
+ *
+ * @param {Player} player - Target player instance
+ * @param {number} currentTick - Active server tick
+ * @param {Vector3} loc - Current player location
+ * @param {BorderBoundsBox} bounds - Active border bounding metadata
+ * @returns {boolean} True if border processing should halt
+ */
+function shouldSkipBorderCheck(player: Player, currentTick: number, loc: Vector3, bounds: BorderBoundsBox): boolean {
+    const sleepTicks = calculateProximitySleep(loc, bounds);
+    if (sleepTicks > 0) {
+        playerNextCheckTickCache.set(player.id, currentTick + sleepTicks);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Formats dimension native string identifier into display friendly format.
+ *
+ * @param {string} dimensionId - Native dimension string (e.g. "minecraft:overworld")
+ * @returns {string} Friendly display label
+ */
+function getDimensionDisplayName(dimensionId: string): string {
+    if (dimensionId === "minecraft:overworld") return "Overworld";
+    if (dimensionId === "minecraft:nether") return "Nether";
+    return "End";
+}
+
+/**
+ * Queues player for safe Y correction job.
+ *
+ * @param {Player} player - Target player instance
+ * @param {Dimension} dimension - Current dimension instance
+ * @param {number} targetX - Target clamped X coordinate
+ * @param {number} targetZ - Target clamped Z coordinate
+ * @param {boolean} outsideFar - True if player crossed far perimeter
+ */
+function queueBorderTeleport(player: Player, dimension: Dimension, targetX: number, targetZ: number, outsideFar: boolean): void {
+    queuedPlayerIds.add(player.id);
+    safeYQueue.push({
+        player,
+        dimension,
+        targetX,
+        targetZ,
+        dimensionName: getDimensionDisplayName(dimension.id),
+        beyondBorder: outsideFar,
+    });
+}
+
+/**
  * Evaluates player location against dimension border boundaries.
  *
  * @param {Player} player - Target player entity
@@ -322,25 +391,13 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
         if (!transform) return;
 
         const { location: loc, dimension } = transform;
-        const borderSize = getConfiguredBorder(dimension.id);
+        const { borderSize, center, bounds } = getBorderBoundsBox(dimension.id);
         if (borderSize <= 0) {
             playerNextCheckTickCache.set(player.id, currentTick + 100);
             return;
         }
 
-        const center = getDimensionCenter(dimension.id);
-        const bounds: BorderBoundsBox = {
-            minX: center.x - borderSize,
-            maxX: center.x + borderSize,
-            minZ: center.z - borderSize,
-            maxZ: center.z + borderSize,
-        };
-
-        const sleepTicks = calculateProximitySleep(loc, bounds);
-        if (sleepTicks > 0) {
-            playerNextCheckTickCache.set(player.id, currentTick + sleepTicks);
-            return;
-        }
+        if (shouldSkipBorderCheck(player, currentTick, loc, bounds)) return;
 
         const { absoluteDistance, isOutside } = getBorderEdgeMetrics(loc, bounds);
 
@@ -354,7 +411,6 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
         }
 
         const outsideFar = loc.x < bounds.minX - 15 || loc.x > bounds.maxX + 15 || loc.z < bounds.minZ - 15 || loc.z > bounds.maxZ + 15;
-
         const { targetX, targetZ } = getClampedTargetCoords(loc, bounds, center, outsideFar);
 
         if (targetX === loc.x && targetZ === loc.z) {
@@ -368,15 +424,7 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
             lastBorderNudgeCache.set(player.id, currentTick);
         }
 
-        queuedPlayerIds.add(player.id);
-        safeYQueue.push({
-            player,
-            dimension,
-            targetX,
-            targetZ,
-            dimensionName: dimension.id === "minecraft:overworld" ? "Overworld" : dimension.id === "minecraft:nether" ? "Nether" : "End",
-            beyondBorder: outsideFar,
-        });
+        queueBorderTeleport(player, dimension, targetX, targetZ, outsideFar);
     } catch (e) {
         console.error(`[Paradox] Error evaluating player world border: ${e}`);
     }
