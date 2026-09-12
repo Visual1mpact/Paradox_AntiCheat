@@ -47,6 +47,7 @@ let checkIntervalId: number | undefined;
 const securityClearanceCache = new Map<string, number>();
 const lastBorderNudgeCache = new Map<string, number>();
 const playerNextCheckTickCache = new Map<string, number>();
+const lastWarningTickCache = new Map<string, number>();
 
 /** Cached spawn location for Overworld centering */
 const cachedSpawnLocation: Vector3 = { x: 0, y: 0, z: 0 };
@@ -54,10 +55,15 @@ let cachedBounds: BorderBounds = { overworld: 0, nether: 0, end: 0 };
 
 /** Timing & Distance Constants */
 const CHECK_INTERVAL_TICKS = 10;
-const ADMIN_BYPASS_SLEEP_TICKS = 600;
 const DEBOUNCE_TICKS = 10;
 const BUFFER = 2;
 const MAX_SAFE_Y_SEARCH_DISTANCE = 32;
+
+/** Border Warning System Constants */
+const WARNING_DISTANCE_BLOCKS = 15;
+const WARNING_DEBOUNCE_TICKS = 10;
+const PARTICLE_WALL_SPAN_BLOCKS = 12;
+const PARTICLE_WALL_STEP_BLOCKS = 0.5;
 
 /** High-performance processing queue */
 const safeYQueue: PendingSafeYCheck[] = [];
@@ -70,6 +76,7 @@ let spawnSubscription: ((ev: PlayerSpawnAfterEvent) => void) | undefined;
 /** Zero-allocation reusable object structures */
 const blockQueryLoc: Vector3 = { x: 0, y: 0, z: 0 };
 const teleportLoc: Vector3 = { x: 0, y: 0, z: 0 };
+const particleLoc: Vector3 = { x: 0, y: 0, z: 0 };
 
 /**
  * Resolves the configured border size for a specified dimension ID.
@@ -138,7 +145,7 @@ export function setSecurityClearance(player: Player, clearance: number): void {
     securityClearanceCache.set(player.id, clearance);
     playerNextCheckTickCache.delete(player.id);
 
-    if (clearance >= 4 && queuedPlayerIds.has(player.id)) {
+    if (clearance === 4 && queuedPlayerIds.has(player.id)) {
         queuedPlayerIds.delete(player.id);
     }
 }
@@ -153,32 +160,27 @@ export function clearPlayerBorderCache(playerId: string): void {
     lastBorderNudgeCache.delete(playerId);
     queuedPlayerIds.delete(playerId);
     playerNextCheckTickCache.delete(playerId);
+    lastWarningTickCache.delete(playerId);
 }
 
 /**
- * Evaluates clearance status and updates sleep tick trackers for level 4 admins.
+ * Computes signed/absolute distance from location to border edges.
  *
- * @param {Player} player - Target player entity
- * @param {number} currentTick - Current server tick
- * @returns {boolean} True if player execution should abort due to admin status or active cooloff.
+ * @param {Vector3} loc - Current player location
+ * @param {BorderBoundsBox} bounds - Border box boundary coordinates
+ * @returns {{ absoluteDistance: number; isOutside: boolean }} Edge offset metrics
  */
-function checkPlayerClearance(player: Player, currentTick: number): boolean {
-    const clearance = getSecurityClearance(player);
+function getBorderEdgeMetrics(loc: Vector3, bounds: BorderBoundsBox): { absoluteDistance: number; isOutside: boolean } {
+    const isOutside = loc.x < bounds.minX || loc.x > bounds.maxX || loc.z < bounds.minZ || loc.z > bounds.maxZ;
 
-    if (clearance >= 4) {
-        if (queuedPlayerIds.has(player.id)) {
-            queuedPlayerIds.delete(player.id);
-        }
-        playerNextCheckTickCache.set(player.id, currentTick + ADMIN_BYPASS_SLEEP_TICKS);
-        return true;
-    }
+    const distMinX = Math.abs(loc.x - bounds.minX);
+    const distMaxX = Math.abs(bounds.maxX - loc.x);
+    const distMinZ = Math.abs(loc.z - bounds.minZ);
+    const distMaxZ = Math.abs(bounds.maxZ - loc.z);
 
-    const nextCheck = playerNextCheckTickCache.get(player.id) ?? 0;
-    if (nextCheck > currentTick + CHECK_INTERVAL_TICKS) {
-        playerNextCheckTickCache.delete(player.id);
-    }
+    const absoluteDistance = Math.min(distMinX, distMaxX, distMinZ, distMaxZ);
 
-    return currentTick < (playerNextCheckTickCache.get(player.id) ?? 0) || queuedPlayerIds.has(player.id);
+    return { absoluteDistance, isOutside };
 }
 
 /**
@@ -189,17 +191,94 @@ function checkPlayerClearance(player: Player, currentTick: number): boolean {
  * @returns {number} Sleep duration in ticks (0 if inside alert perimeter)
  */
 function calculateProximitySleep(loc: Vector3, bounds: BorderBoundsBox): number {
-    const distMinX = loc.x - bounds.minX;
-    const distMaxX = bounds.maxX - loc.x;
-    const distMinZ = loc.z - bounds.minZ;
-    const distMaxZ = bounds.maxZ - loc.z;
+    const { absoluteDistance } = getBorderEdgeMetrics(loc, bounds);
 
-    const minDistanceToEdge = Math.min(distMinX, distMaxX, distMinZ, distMaxZ);
-
-    if (minDistanceToEdge > 60) {
-        return Math.min(15, Math.max(5, Math.floor((minDistanceToEdge - 30) / 10)));
+    if (absoluteDistance > WARNING_DISTANCE_BLOCKS + 30) {
+        return Math.min(15, Math.max(5, Math.floor((absoluteDistance - 30) / 10)));
     }
     return 0;
+}
+
+/**
+ * Spawns a high-density vertical grid of redstone particles forming a solid wall segment.
+ *
+ * @param {Dimension} dimension - Target dimension instance
+ * @param {Vector3} loc - Player coordinate position
+ * @param {BorderBoundsBox} bounds - Active border bounding metadata
+ */
+function renderParticleWallSegment(dimension: Dimension, loc: Vector3, bounds: BorderBoundsBox): void {
+    const distMinX = Math.abs(loc.x - bounds.minX);
+    const distMaxX = Math.abs(bounds.maxX - loc.x);
+    const distMinZ = Math.abs(loc.z - bounds.minZ);
+    const distMaxZ = Math.abs(bounds.maxZ - loc.z);
+
+    const minDistance = Math.min(distMinX, distMaxX, distMinZ, distMaxZ);
+
+    const halfSpan = PARTICLE_WALL_SPAN_BLOCKS / 2;
+    const startY = Math.floor(loc.y) - 1;
+
+    if (minDistance === distMinX || minDistance === distMaxX) {
+        const wallX = minDistance === distMinX ? bounds.minX : bounds.maxX;
+        particleLoc.x = wallX;
+
+        for (let zOffset = -halfSpan; zOffset <= halfSpan; zOffset += PARTICLE_WALL_STEP_BLOCKS) {
+            particleLoc.z = loc.z + zOffset;
+            for (let yOffset = 0; yOffset <= 5; yOffset += 0.5) {
+                particleLoc.y = startY + yOffset;
+                dimension.spawnParticle("minecraft:redstone_ore_dust_particle", particleLoc);
+            }
+        }
+    } else {
+        const wallZ = minDistance === distMinZ ? bounds.minZ : bounds.maxZ;
+        particleLoc.z = wallZ;
+
+        for (let xOffset = -halfSpan; xOffset <= halfSpan; xOffset += PARTICLE_WALL_STEP_BLOCKS) {
+            particleLoc.x = loc.x + xOffset;
+            for (let yOffset = 0; yOffset <= 5; yOffset += 0.5) {
+                particleLoc.y = startY + yOffset;
+                dimension.spawnParticle("minecraft:redstone_ore_dust_particle", particleLoc);
+            }
+        }
+    }
+}
+
+/**
+ * Renders proximity warning effects (Action bar text, dynamic audio pitch/volume, and particle wall).
+ *
+ * @param {Player} player - Target player instance
+ * @param {Dimension} dimension - Current player dimension
+ * @param {Vector3} loc - Current location coordinates
+ * @param {BorderBoundsBox} bounds - Border box metadata
+ * @param {number} distance - Absolute distance to nearest edge in blocks
+ * @param {boolean} isOutside - True if player is past the boundary
+ * @param {number} currentTick - Active server tick
+ */
+function handleBorderWarning(player: Player, dimension: Dimension, loc: Vector3, bounds: BorderBoundsBox, distance: number, isOutside: boolean, currentTick: number): void {
+    const lastWarn = lastWarningTickCache.get(player.id) ?? 0;
+    if (currentTick - lastWarn < WARNING_DEBOUNCE_TICKS) return;
+    lastWarningTickCache.set(player.id, currentTick);
+
+    const roundedDistance = Math.max(0, Math.floor(distance));
+
+    try {
+        // 1. Action bar alert
+        if (isOutside) {
+            player.onScreenDisplay.setActionBar(`§e§lNOTICE:§r §7Beyond World Border (§c+${roundedDistance}m§7)`);
+        } else {
+            player.onScreenDisplay.setActionBar(`§c§lWARNING:§r §7Approaching World Border (§e${roundedDistance}m§7 away)`);
+        }
+
+        // 2. Proximity Sound Cue
+        const pitch = Math.min(2.0, Math.max(0.5, 2.0 - distance / WARNING_DISTANCE_BLOCKS));
+        const volume = Math.min(0.8, Math.max(0.2, 0.8 - (distance / WARNING_DISTANCE_BLOCKS) * 0.6));
+
+        player.playSound("note.harp", { pitch, volume });
+
+        // 3. Render High-Density 3D Particle Wall
+        renderParticleWallSegment(dimension, loc, bounds);
+    } catch {
+        // Ignored if entity or screen display call fails
+    }
 }
 
 /**
@@ -235,7 +314,8 @@ function getClampedTargetCoords(loc: Vector3, bounds: BorderBoundsBox, center: {
  * @param {number} currentTick - Pre-fetched current server tick
  */
 function checkPlayerBorder(player: Player, currentTick: number): void {
-    if (checkPlayerClearance(player, currentTick)) return;
+    const nextCheck = playerNextCheckTickCache.get(player.id) ?? 0;
+    if (currentTick < nextCheck || queuedPlayerIds.has(player.id)) return;
 
     try {
         const transform = PlayerLocationCache.getTransform(player);
@@ -262,16 +342,27 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
             return;
         }
 
-        const outside = loc.x < bounds.minX - 15 || loc.x > bounds.maxX + 15 || loc.z < bounds.minZ - 15 || loc.z > bounds.maxZ + 15;
+        const { absoluteDistance, isOutside } = getBorderEdgeMetrics(loc, bounds);
 
-        const { targetX, targetZ } = getClampedTargetCoords(loc, bounds, center, outside);
+        if (absoluteDistance <= WARNING_DISTANCE_BLOCKS) {
+            handleBorderWarning(player, dimension, loc, bounds, absoluteDistance, isOutside, currentTick);
+        }
+
+        if (getSecurityClearance(player) === 4) {
+            playerNextCheckTickCache.set(player.id, currentTick + CHECK_INTERVAL_TICKS);
+            return;
+        }
+
+        const outsideFar = loc.x < bounds.minX - 15 || loc.x > bounds.maxX + 15 || loc.z < bounds.minZ - 15 || loc.z > bounds.maxZ + 15;
+
+        const { targetX, targetZ } = getClampedTargetCoords(loc, bounds, center, outsideFar);
 
         if (targetX === loc.x && targetZ === loc.z) {
             playerNextCheckTickCache.set(player.id, currentTick + CHECK_INTERVAL_TICKS);
             return;
         }
 
-        if (!outside) {
+        if (!outsideFar) {
             const lastNudge = lastBorderNudgeCache.get(player.id) ?? 0;
             if (currentTick - lastNudge < DEBOUNCE_TICKS) return;
             lastBorderNudgeCache.set(player.id, currentTick);
@@ -284,7 +375,7 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
             targetX,
             targetZ,
             dimensionName: dimension.id === "minecraft:overworld" ? "Overworld" : dimension.id === "minecraft:nether" ? "Nether" : "End",
-            beyondBorder: outside,
+            beyondBorder: outsideFar,
         });
     } catch (e) {
         console.error(`[Paradox] Error evaluating player world border: ${e}`);
@@ -563,4 +654,5 @@ export function stopWorldBorderCheck(): void {
     securityClearanceCache.clear();
     lastBorderNudgeCache.clear();
     playerNextCheckTickCache.clear();
+    lastWarningTickCache.clear();
 }
