@@ -63,7 +63,7 @@ const MAX_SAFE_Y_SEARCH_DISTANCE = 32;
 const WARNING_DISTANCE_BLOCKS = 15;
 const WARNING_DEBOUNCE_TICKS = 10;
 const PARTICLE_WALL_SPAN_BLOCKS = 12;
-const PARTICLE_WALL_STEP_BLOCKS = 0.5;
+const PARTICLE_WALL_STEP_BLOCKS = 1.0;
 
 /** High-performance processing queue */
 const safeYQueue: PendingSafeYCheck[] = [];
@@ -200,60 +200,59 @@ function calculateProximitySleep(loc: Vector3, bounds: BorderBoundsBox): number 
 }
 
 /**
- * Spawns a high-density vertical grid of redstone particles forming a solid wall segment.
+ * Spawns an optimized vertical grid of redstone particles forming a solid wall segment directly to player.
  *
- * @param {Dimension} dimension - Target dimension instance
+ * @param {Player} player - Target player instance
  * @param {Vector3} loc - Player coordinate position
  * @param {BorderBoundsBox} bounds - Active border bounding metadata
  */
-function renderParticleWallSegment(dimension: Dimension, loc: Vector3, bounds: BorderBoundsBox): void {
-    const distMinX = Math.abs(loc.x - bounds.minX);
-    const distMaxX = Math.abs(bounds.maxX - loc.x);
-    const distMinZ = Math.abs(loc.z - bounds.minZ);
-    const distMaxZ = Math.abs(bounds.maxZ - loc.z);
+function renderParticleWallSegment(player: Player, loc: Vector3, bounds: BorderBoundsBox): void {
+    const { minX, maxX, minZ, maxZ } = bounds;
+    const px = loc.x;
+    const pz = loc.z;
+
+    const distMinX = Math.abs(px - minX);
+    const distMaxX = Math.abs(maxX - px);
+    const distMinZ = Math.abs(pz - minZ);
+    const distMaxZ = Math.abs(maxZ - pz);
 
     const minDistance = Math.min(distMinX, distMaxX, distMinZ, distMaxZ);
-
     const halfSpan = PARTICLE_WALL_SPAN_BLOCKS / 2;
     const startY = Math.floor(loc.y) - 1;
 
-    if (minDistance === distMinX || minDistance === distMaxX) {
-        const wallX = minDistance === distMinX ? bounds.minX : bounds.maxX;
-        particleLoc.x = wallX;
+    const isXPlane = minDistance === distMinX || minDistance === distMaxX;
 
-        for (let zOffset = -halfSpan; zOffset <= halfSpan; zOffset += PARTICLE_WALL_STEP_BLOCKS) {
-            particleLoc.z = loc.z + zOffset;
-            for (let yOffset = 0; yOffset <= 5; yOffset += 0.5) {
-                particleLoc.y = startY + yOffset;
-                dimension.spawnParticle("minecraft:redstone_ore_dust_particle", particleLoc);
-            }
-        }
+    if (isXPlane) {
+        particleLoc.x = minDistance === distMinX ? minX : maxX;
     } else {
-        const wallZ = minDistance === distMinZ ? bounds.minZ : bounds.maxZ;
-        particleLoc.z = wallZ;
+        particleLoc.z = minDistance === distMinZ ? minZ : maxZ;
+    }
 
-        for (let xOffset = -halfSpan; xOffset <= halfSpan; xOffset += PARTICLE_WALL_STEP_BLOCKS) {
-            particleLoc.x = loc.x + xOffset;
-            for (let yOffset = 0; yOffset <= 5; yOffset += 0.5) {
-                particleLoc.y = startY + yOffset;
-                dimension.spawnParticle("minecraft:redstone_ore_dust_particle", particleLoc);
-            }
+    for (let offset = -halfSpan; offset <= halfSpan; offset += PARTICLE_WALL_STEP_BLOCKS) {
+        if (isXPlane) {
+            particleLoc.z = pz + offset;
+        } else {
+            particleLoc.x = px + offset;
+        }
+
+        for (let yOffset = 0; yOffset <= 5; yOffset += 1.0) {
+            particleLoc.y = startY + yOffset;
+            player.spawnParticle("minecraft:redstone_ore_dust_particle", particleLoc);
         }
     }
 }
 
 /**
- * Renders proximity warning effects (Action bar text, dynamic audio pitch/volume, and particle wall).
+ * Renders proximity warning effects (Action bar text, dynamic audio pitch/volume, and client-only particle wall).
  *
  * @param {Player} player - Target player instance
- * @param {Dimension} dimension - Current player dimension
  * @param {Vector3} loc - Current location coordinates
  * @param {BorderBoundsBox} bounds - Border box metadata
  * @param {number} distance - Absolute distance to nearest edge in blocks
  * @param {boolean} isOutside - True if player is past the boundary
  * @param {number} currentTick - Active server tick
  */
-function handleBorderWarning(player: Player, dimension: Dimension, loc: Vector3, bounds: BorderBoundsBox, distance: number, isOutside: boolean, currentTick: number): void {
+function handleBorderWarning(player: Player, loc: Vector3, bounds: BorderBoundsBox, distance: number, isOutside: boolean, currentTick: number): void {
     const lastWarn = lastWarningTickCache.get(player.id) ?? 0;
     if (currentTick - lastWarn < WARNING_DEBOUNCE_TICKS) return;
     lastWarningTickCache.set(player.id, currentTick);
@@ -274,8 +273,8 @@ function handleBorderWarning(player: Player, dimension: Dimension, loc: Vector3,
 
         player.playSound("note.harp", { pitch, volume });
 
-        // 3. Render High-Density 3D Particle Wall
-        renderParticleWallSegment(dimension, loc, bounds);
+        // 3. Render Optimized Client-Side Particle Wall directly via Player API
+        renderParticleWallSegment(player, loc, bounds);
     } catch {
         // Ignored if entity or screen display call fails
     }
@@ -402,7 +401,7 @@ function checkPlayerBorder(player: Player, currentTick: number): void {
         const { absoluteDistance, isOutside } = getBorderEdgeMetrics(loc, bounds);
 
         if (absoluteDistance <= WARNING_DISTANCE_BLOCKS) {
-            handleBorderWarning(player, dimension, loc, bounds, absoluteDistance, isOutside, currentTick);
+            handleBorderWarning(player, loc, bounds, absoluteDistance, isOutside, currentTick);
         }
 
         if (getSecurityClearance(player) === 4) {
