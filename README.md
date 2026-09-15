@@ -6,7 +6,7 @@
 
   <p>
     <a href="https://minecraft.net">
-      <img src="https://img.shields.io/badge/Minecraft%20Bedrock-v1.26.40-brightgreen?style=for-the-badge&amp;logo=minecraft" alt="Compatibility">
+      <img src="https://img.shields.io/badge/Minecraft%20Bedrock-v1.26.50-brightgreen?style=for-the-badge&amp;logo=minecraft" alt="Compatibility">
     </a>
     <a href="https://discord.gg/qVd53N2xhq">
       <img src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&amp;logo=discord&amp;logoColor=white" alt="Discord">
@@ -25,10 +25,10 @@
 
 | API Module | Required Version | Description / Purpose |
 | :---: | :---: | :--- |
-| `@minecraft/server` | `2.10.0-Beta` | Core Script Engine API for world events, entity handling, block management, and main logic loops. |
+| `@minecraft/server` | `2.11.0-Beta` | Core Script Engine API for world events, entity handling, block management, and main logic loops. |
 | `@minecraft/server-net` | `1.0.0-Beta` | Handles external HTTP network communication for remote logging, telemetry, and external server synchronization. |
 | `@minecraft/server-admin` | `1.0.0-Beta` | Manages elevated server administrative functions, secret configuration properties, and execution variables. |
-| `@minecraft/server-ui` | `2.2.0-Beta` | Renders custom in-game UI menus, dynamic modal dialogs, and action forms directly to players. |
+| `@minecraft/server-ui` | `2.3.0-Beta` | Renders custom in-game UI menus, dynamic modal dialogs, and action forms directly to players. |
 
 </div>
 
