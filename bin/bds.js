@@ -10,6 +10,7 @@ import puppeteer from "puppeteer";
  * Retrieves the latest Minecraft Bedrock Dedicated Server version
  * by scraping the official download page.
  *
+ * @param {number} [retries=3] - Maximum retry attempts.
  * @returns {Promise<string>} Latest version number (e.g. "1.21.92.1").
  */
 async function getLatestVersion(retries = 3) {
@@ -68,7 +69,7 @@ function downloadBDS(version) {
         const request = https.get(downloadURL, (response) => {
             if (response.statusCode !== 200) {
                 file.close();
-                fs.unlinkSync(downloadLocation); // Remove the incomplete file
+                fs.unlinkSync(downloadLocation);
                 reject(`   - Failed to download. HTTP status code: ${response.statusCode}\n`);
                 return;
             }
@@ -118,7 +119,54 @@ function extractBDS(version) {
 }
 
 /**
- * Main script to manage the BDS server download, extraction, and folder copying.
+ * Ensures @minecraft/server-net module permission exists in the new server instance configuration.
+ *
+ * @param {string} newVersionDir - Directory path for the newly downloaded BDS version.
+ * @returns {Promise<void>}
+ */
+async function allowServerNetModule(newVersionDir) {
+    const permissionsPath = path.join(newVersionDir, "config", "default", "permissions.json");
+    console.log(`> Configuring module permissions in ${permissionsPath}...`);
+
+    if (!fs.existsSync(permissionsPath)) {
+        console.log("   - permissions.json not found, skipping module permission update.\n");
+        return;
+    }
+
+    try {
+        const permissions = await fs.readJson(permissionsPath);
+        if (Array.isArray(permissions.allowed_modules)) {
+            if (!permissions.allowed_modules.includes("@minecraft/server-net")) {
+                permissions.allowed_modules.push("@minecraft/server-net");
+                await fs.writeJson(permissionsPath, permissions, { spaces: 2 });
+                console.log("   - Added '@minecraft/server-net' to allowed_modules.\n");
+            } else {
+                console.log("   - '@minecraft/server-net' is already present.\n");
+            }
+        }
+    } catch (error) {
+        console.error(`   - Error updating permissions.json: ${error.message}\n`);
+    }
+}
+
+/**
+ * Deletes the old BDS directory recursively.
+ *
+ * @param {string} oldVersionDir - Directory path of the old version to remove.
+ * @returns {Promise<void>}
+ */
+async function deleteOldVersion(oldVersionDir) {
+    console.log(`> Deleting old server directory: ${oldVersionDir}...`);
+    try {
+        await fs.remove(oldVersionDir);
+        console.log("   - Old server directory deleted successfully.\n");
+    } catch (error) {
+        console.error(`   - Error deleting old server directory: ${error.message}\n`);
+    }
+}
+
+/**
+ * Main script to manage the BDS server download, extraction, updating, and cleanup.
  */
 async function main() {
     try {
@@ -138,16 +186,21 @@ async function main() {
 
         const downloadLocation = await downloadBDS(latestVersion);
 
-        // Proceed with extraction
         await extractBDS(latestVersion);
-
-        // Delete the zip archive after extraction is complete
         await deleteZipArchive(downloadLocation);
 
         await copyFolders(oldVersionDir, newVersionDir);
         await updateServerProperties(oldVersionDir, newVersionDir);
+
+        // Append module permission entry
+        await allowServerNetModule(newVersionDir);
+
+        // Remove old server directory as final step
+        if (oldVersionDir && fs.existsSync(oldVersionDir)) {
+            await deleteOldVersion(oldVersionDir);
+        }
     } catch (error) {
-        console.error(error);
+        console.error("Error executing script:", error);
     }
 }
 
@@ -169,10 +222,10 @@ function deleteZipArchive(zipFile) {
         fs.unlink(zipFile, (err) => {
             if (err) {
                 console.error(`   - Error deleting zip archive: ${err.message}\n`);
-                reject(err); // Reject if there's an error
+                reject(err);
             } else {
                 console.log("   - Zip archive deleted.\n");
-                resolve(); // Resolve when deletion is complete
+                resolve();
             }
         });
     });
@@ -219,9 +272,6 @@ async function copyFolders(oldVersionDir, newVersionDir) {
 
     const newWorldBetaApiDir = "new-world-beta-api";
 
-    let copied = false; // Flag to track if anything was copied
-
-    // Ensure that the destination directories are created before copying
     if (!fs.existsSync(newWorldsDir)) {
         fs.mkdirSync(newWorldsDir, { recursive: true });
     }
@@ -235,7 +285,6 @@ async function copyFolders(oldVersionDir, newVersionDir) {
     if (oldVersionDir && fs.existsSync(oldWorldsDir)) {
         fs.copySync(oldWorldsDir, newWorldsDir);
         console.log("   - Worlds copied.");
-        copied = true;
     } else if (fs.existsSync(newWorldBetaApiDir)) {
         console.log("   - Copying 'new-world-beta-api' folder.");
         const subfolderPath = path.join(newWorldsDir, "Bedrock level");
@@ -243,7 +292,6 @@ async function copyFolders(oldVersionDir, newVersionDir) {
         fs.copySync(newWorldBetaApiDir, subfolderPath);
         console.log(`   - '${newWorldBetaApiDir}' folder copied to 'Bedrock level' within 'worlds'.`);
     }
-    // ... repeat for other directories using fs.copySync ...
 }
 
 /**
@@ -253,16 +301,18 @@ async function copyFolders(oldVersionDir, newVersionDir) {
  * @param {string} newVersionDir - The directory of the new BDS version.
  */
 async function updateServerProperties(oldVersionDir, newVersionDir) {
+    if (!oldVersionDir) return;
+
     const oldPropertiesFile = `${oldVersionDir}/server.properties`;
     const newPropertiesFile = `${newVersionDir}/server.properties`;
 
     console.log("> Comparing server.properties...");
 
     if (fs.existsSync(oldPropertiesFile) && fs.existsSync(newPropertiesFile)) {
-        const { properties: oldProperties, lines: oldLines } = readPropertiesFile(oldPropertiesFile);
+        const { properties: oldProperties } = readPropertiesFile(oldPropertiesFile);
         const { properties: newProperties, lines: newLines } = readPropertiesFile(newPropertiesFile);
 
-        const updatedProperties = { ...oldProperties }; // Start with the old properties
+        const updatedProperties = { ...oldProperties };
 
         for (const key in oldProperties) {
             if (newProperties[key] !== oldProperties[key]) {
