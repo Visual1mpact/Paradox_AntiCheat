@@ -166,7 +166,7 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
 }
 
 /**
- * Validates player presence on the whitelist and migrates legacy ID schema on the fly.
+ * Validates player presence on the whitelist and migrates legacy ID schema or missing IDs on the fly.
  *
  * @param {string} playerName - Target player name key.
  * @param {string} playerId - Target player runtime identifier.
@@ -178,21 +178,18 @@ async function isWhitelisted(playerName: string, playerId: string): Promise<bool
 
     if (!record) return false;
 
-    // Resolve standard 'id' or fallback legacy 'ID' property
     const legacyRecord = record as ListPlayerRecord & { ID?: string };
     const targetId = record.id ?? legacyRecord.ID;
 
-    if (targetId === playerId) {
-        // Auto-migrate legacy key format to standard 'id'
-        if ("ID" in legacyRecord) {
-            delete legacyRecord.ID;
-            record.id = playerId;
-            await whitelistDB.set("players", whitelistedPlayers);
-        }
+    // If added offline (id is null) or legacy format detected, populate/update ID
+    if (!targetId || "ID" in legacyRecord) {
+        if ("ID" in legacyRecord) delete legacyRecord.ID;
+        record.id = playerId;
+        await whitelistDB.set("players", whitelistedPlayers);
         return true;
     }
 
-    return false;
+    return targetId === playerId;
 }
 
 /**
@@ -262,18 +259,14 @@ async function allowList(event: PlayerSpawnAfterEvent): Promise<void> {
     const record = allowListedPlayers[playerName];
 
     if (record) {
-        // Resolve standard 'id' or fallback legacy 'ID' property
         const legacyRecord = record as ListPlayerRecord & { ID?: string };
         const targetId = record.id ?? legacyRecord.ID;
 
-        // Authenticate player ID against database record
-        if (targetId === player.id) {
-            // Auto-migrate legacy key format to standard 'id'
-            if ("ID" in legacyRecord) {
-                delete legacyRecord.ID;
-                record.id = player.id;
-                await allowlistDB.set("players", allowListedPlayers);
-            }
+        // If missing ID (added offline) or matching online ID, authenticate and update ID
+        if (!targetId || targetId === player.id) {
+            if ("ID" in legacyRecord) delete legacyRecord.ID;
+            record.id = player.id;
+            await allowlistDB.set("players", allowListedPlayers);
 
             player.sendMessage(`§2[§7Paradox§2]§o§7 Access granted. Welcome back, ${playerName}.`);
             return;

@@ -1,6 +1,7 @@
 import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { allowlistDB } from "../../event-listeners/world-initialize";
+import { ListPlayerRecord } from "../../types/db-types";
 
 export const allowlistCommand: Command = {
     name: "allowlist",
@@ -91,9 +92,10 @@ export const allowlistCommand: Command = {
             } else {
                 message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Allowlisted Players:");
                 keys.forEach((name) => {
-                    const player = current[name];
+                    const player = current[name] as ListPlayerRecord & { ID?: string };
                     if (player) {
-                        message.sender.sendMessage(` §o§7| [§f${name}§7] (ID: ${player.id})`);
+                        const targetId = player.id ?? player.ID ?? "Pending Join";
+                        message.sender.sendMessage(` §o§7| [§f${name}§7] (ID: ${targetId})`);
                     }
                 });
             }
@@ -112,17 +114,19 @@ export const allowlistCommand: Command = {
                 return;
             }
 
-            // Find target player entity in online players to capture ID
+            // Capture online ID or set to null until they join
             const targetPlayer = world.getPlayers({ name: playerName })[0];
+            const targetId = targetPlayer ? targetPlayer.id : null;
 
-            if (!targetPlayer) {
-                message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" must be online to capture their ID.`);
-                return;
-            }
-
-            current[playerName] = { id: targetPlayer.id };
+            current[playerName] = { id: targetId };
             await allowlistDB.set("players", current);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the allowlist.`);
+
+            if (targetId) {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" (ID: ${targetId}) has been added to the allowlist.`);
+            } else {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the allowlist. ID will be captured when they join.`);
+            }
+            return;
         }
 
         if (action === "remove") {

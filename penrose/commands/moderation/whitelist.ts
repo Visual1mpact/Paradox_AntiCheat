@@ -1,8 +1,8 @@
 import { Command } from "../../classes/core/command-handler";
 import { ChatSendBeforeEvent, world } from "@minecraft/server";
 import { whitelistDB } from "../../event-listeners/world-initialize";
+import { ListPlayerRecord } from "../../types/db-types";
 
-// Define the whitelist command
 export const whitelistCommand: Command = {
     name: "whitelist",
     description: "Manage the whitelist by adding or removing a player, or list all whitelisted players.",
@@ -71,9 +71,10 @@ export const whitelistCommand: Command = {
             } else {
                 message.sender.sendMessage("§2[§7Paradox§2]§o§7 Whitelisted Players:");
                 playerNames.forEach((name) => {
-                    const record = whitelist[name];
+                    const record = whitelist[name] as ListPlayerRecord & { ID?: string };
                     if (record) {
-                        message.sender.sendMessage(` §o§7| [§f${name}§7] (ID: ${record.id})`);
+                        const targetId = record.id ?? record.ID ?? "Pending Join";
+                        message.sender.sendMessage(` §o§7| [§f${name}§7] (ID: ${targetId})`);
                     }
                 });
             }
@@ -92,17 +93,19 @@ export const whitelistCommand: Command = {
                 return;
             }
 
-            // Find target player entity in online players to capture ID
+            // Capture online ID or set to null until they join
             const targetPlayer = world.getPlayers({ name: playerName })[0];
+            const targetId = targetPlayer ? targetPlayer.id : null;
 
-            if (!targetPlayer) {
-                message.sender.sendMessage(`§o§c[Paradox] Player "${playerName}§c" must be online to capture their ID.`);
-                return;
-            }
-
-            whitelist[playerName] = { id: targetPlayer.id };
+            whitelist[playerName] = { id: targetId };
             await whitelistDB.set("players", whitelist);
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the whitelist.`);
+
+            if (targetId) {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" (ID: ${targetId}) has been added to the whitelist.`);
+            } else {
+                message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Player "${playerName}§7" has been added to the whitelist. ID will be captured when they join.`);
+            }
+            return;
         }
 
         if (action === "remove") {
