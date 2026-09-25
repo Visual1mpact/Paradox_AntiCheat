@@ -3,6 +3,9 @@ import { system, world } from "@minecraft/server";
 /** Maximum string length stored per individual Bedrock dynamic property chunk */
 const CHUNK_SIZE = 30000;
 
+/** Iteration yield threshold to prevent Watchdog execution timeouts during LZW compression */
+const COMPRESSION_YIELD_THRESHOLD = 5000;
+
 /** Defines a valid structure for database values. All entries must be plain objects */
 export type DatabaseValueObject = Record<string, any>;
 
@@ -13,18 +16,16 @@ export type DatabaseValueObject = Record<string, any>;
  */
 class LZCompressor {
     /**
-     * Compresses an uncompressed UTF-8/UTF-16 string using the LZW algorithm.
+     * Asynchronously compresses an uncompressed UTF-8/UTF-16 string using the LZW algorithm.
+     * Yields execution to the server main loop periodically to avoid thread starvation and Watchdog hangs.
      * @param uncompressed Raw input string (e.g., stringified JSON).
      * @returns LZW compressed payload stringified safely as JSON array.
      */
-    public static compress(uncompressed: string): string {
+    public static async compress(uncompressed: string): Promise<string> {
         if (!uncompressed) return "";
 
         let dictSize = 256;
-        const dictionary = new Map<string, number>();
-        for (let i = 0; i < 256; i++) {
-            dictionary.set(String.fromCharCode(i), i);
-        }
+        const dictionary = LZCompressor.buildInitialCompressDictionary();
 
         let w = "";
         const result: number[] = [];
@@ -32,12 +33,17 @@ class LZCompressor {
         for (let i = 0; i < uncompressed.length; i++) {
             const c = uncompressed.charAt(i);
             const wc = w + c;
+
             if (dictionary.has(wc)) {
                 w = wc;
             } else {
                 result.push(dictionary.get(w)!);
                 dictionary.set(wc, dictSize++);
                 w = c;
+            }
+
+            if (i > 0 && i % COMPRESSION_YIELD_THRESHOLD === 0) {
+                await LZCompressor.yieldToEngine();
             }
         }
 
@@ -59,7 +65,7 @@ class LZCompressor {
         const compressedCodes = LZCompressor.parseCodes(compressed);
         if (!compressedCodes || compressedCodes.length === 0) return "";
 
-        const dictionary = LZCompressor.buildInitialDictionary();
+        const dictionary = LZCompressor.buildInitialDecompressDictionary();
         let dictSize = 256;
 
         let w = String.fromCharCode(compressedCodes[0]!);
@@ -80,11 +86,30 @@ class LZCompressor {
         return result;
     }
 
-    /**
-     * Safely parses compressed string into code array.
-     * @param compressed Raw compressed JSON array string.
-     * @returns Array of numerical codes or undefined.
-     */
+    /** Yields thread execution back to Bedrock engine to clear execution timer */
+    private static async yieldToEngine(): Promise<void> {
+        return new Promise<void>((resolve) => system.run(resolve));
+    }
+
+    /** Builds initial 256-entry dictionary for string compression */
+    private static buildInitialCompressDictionary(): Map<string, number> {
+        const dictionary = new Map<string, number>();
+        for (let i = 0; i < 256; i++) {
+            dictionary.set(String.fromCharCode(i), i);
+        }
+        return dictionary;
+    }
+
+    /** Builds initial 256-entry dictionary for string decompression */
+    private static buildInitialDecompressDictionary(): Map<number, string> {
+        const dictionary = new Map<number, string>();
+        for (let i = 0; i < 256; i++) {
+            dictionary.set(i, String.fromCharCode(i));
+        }
+        return dictionary;
+    }
+
+    /** Safely parses compressed string into code array */
     private static parseCodes(compressed: string): number[] | undefined {
         try {
             const parsed = JSON.parse(compressed);
@@ -94,33 +119,10 @@ class LZCompressor {
         }
     }
 
-    /**
-     * Builds the initial 256-character dictionary for LZW decompression.
-     * @returns Prepared map dictionary.
-     */
-    private static buildInitialDictionary(): Map<number, string> {
-        const dictionary = new Map<number, string>();
-        for (let i = 0; i < 256; i++) {
-            dictionary.set(i, String.fromCharCode(i));
-        }
-        return dictionary;
-    }
-
-    /**
-     * Resolves single LZW dictionary entry step.
-     * @param k Code identifier.
-     * @param dictSize Current dictionary length.
-     * @param w Current dictionary sequence window.
-     * @param dictionary Decompression dictionary map.
-     * @returns Resolved string sequence.
-     */
+    /** Resolves single LZW dictionary entry step */
     private static resolveEntry(k: number, dictSize: number, w: string, dictionary: Map<number, string>): string | undefined {
-        if (dictionary.has(k)) {
-            return dictionary.get(k)!;
-        }
-        if (k === dictSize) {
-            return w + w.charAt(0);
-        }
+        if (dictionary.has(k)) return dictionary.get(k)!;
+        if (k === dictSize) return w + w.charAt(0);
         return undefined;
     }
 }
@@ -128,7 +130,7 @@ class LZCompressor {
 /**
  * Type-safe, chunked database using Minecraft Dynamic Properties.
  * Features chunking for large payloads, re-entrant concurrency locking,
- * UTF-16 safe compression, and automated schema cleanup.
+ * non-blocking UTF-16 safe compression, and automated schema cleanup.
  */
 export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     /** Unique database namespace identifier */
@@ -169,24 +171,17 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         }
     }
 
-    /**
-     * Returns all active `OptimizedDatabase` instances instantiated in the current session.
-     */
+    /** Returns all active `OptimizedDatabase` instances instantiated in current session */
     public static getAllInstances(): OptimizedDatabase<any>[] {
         return this.instances;
     }
 
-    /**
-     * Reads pointer set listing stored entry base keys (O(1) cached access).
-     */
+    /** Reads pointer set listing stored entry base keys (O(1) cached access) */
     private _getPointers(): Set<string> {
         if (this.cachedPointers !== undefined) return this.cachedPointers;
 
         const chunks = this._readRawChunks(this.pointerKey);
-
-        if (chunks.length === 0) {
-            return this._readLegacyPointers();
-        }
+        if (chunks.length === 0) return this._readLegacyPointers();
 
         try {
             const joined = chunks.join("");
@@ -205,16 +200,13 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             const legacy = world.getDynamicProperty(this.pointerKey) as string | undefined;
             const parsed = legacy ? JSON.parse(legacy) : [];
             this.cachedPointers = new Set<string>(parsed);
-            return this.cachedPointers;
         } catch {
             this.cachedPointers = new Set<string>();
-            return this.cachedPointers;
         }
+        return this.cachedPointers;
     }
 
-    /**
-     * Persists updated pointer Set into Dynamic Properties.
-     */
+    /** Persists updated pointer Set into Dynamic Properties */
     private _savePointers(): void {
         if (!this.cachedPointers) return;
 
@@ -244,13 +236,27 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         const TIMEOUT = 10000;
         const start = Date.now();
 
-        const isBlocked = () => resources.some((res) => this._locks.has(res) && this._locks.get(res) !== lockId);
-
-        while (isBlocked()) {
+        while (OptimizedDatabase.isResourceBlocked(resources, lockId)) {
             if (Date.now() - start > TIMEOUT) throw new Error(`Lock timeout for resources: ${resources.join(", ")}`);
             await new Promise<void>((resolve) => system.run(resolve));
         }
 
+        const acquired = OptimizedDatabase.acquireLocks(resources, lockId);
+
+        try {
+            return await fn();
+        } finally {
+            OptimizedDatabase.releaseLocks(acquired);
+        }
+    }
+
+    /** Checks if any requested resource is locked by another context */
+    private static isResourceBlocked(resources: string[], lockId: string): boolean {
+        return resources.some((res) => this._locks.has(res) && this._locks.get(res) !== lockId);
+    }
+
+    /** Acquires ownership of unlocked resources */
+    private static acquireLocks(resources: string[], lockId: string): string[] {
         const acquired: string[] = [];
         resources.forEach((res) => {
             if (!this._locks.has(res)) {
@@ -258,12 +264,12 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
                 acquired.push(res);
             }
         });
+        return acquired;
+    }
 
-        try {
-            return await fn();
-        } finally {
-            acquired.forEach((res) => this._locks.delete(res));
-        }
+    /** Releases active locks held by current context */
+    private static releaseLocks(acquired: string[]): void {
+        acquired.forEach((res) => this._locks.delete(res));
     }
 
     /** Generates a unique execution context token for lock re-entrancy */
@@ -271,10 +277,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return `${this.name}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     }
 
-    /**
-     * Clears sub-chunks corresponding to a base property key safely without leaving orphaned chunks.
-     * @param baseKey Base dynamic property key prefix to delete.
-     */
+    /** Clears sub-chunks corresponding to a base property key safely */
     private _deleteChunks(baseKey: string): void {
         let i = 0;
         let consecutiveUndefined = 0;
@@ -292,10 +295,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         world.setDynamicProperty(baseKey, undefined);
     }
 
-    /**
-     * Reads array of sequential dynamic property chunk values.
-     * @param baseKey Base key prefix to assemble chunks for.
-     */
+    /** Reads array of sequential dynamic property chunk values */
     private _readRawChunks(baseKey: string): string[] {
         const chunks: string[] = [];
         for (let i = 0; ; ++i) {
@@ -319,13 +319,12 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
 
         await OptimizedDatabase._withLock(lockKeys, ctx, async () => {
             const json = JSON.stringify(value);
-            const rawCompressed = LZCompressor.compress(json);
+            const rawCompressed = await LZCompressor.compress(json);
 
             const payload = this._formatPayload(rawCompressed);
-
             const tmpBase = `${base}~tmp`;
-            this._deleteChunks(tmpBase);
 
+            this._deleteChunks(tmpBase);
             this._writeStagedPayload(tmpBase, payload);
 
             world.setDynamicProperty(base, "USE_TMP");
@@ -334,6 +333,11 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
             this._promoteStagedPayload(base, tmpBase);
         });
 
+        this._updatePointerIndex(base);
+    }
+
+    /** Updates in-memory and dynamic property pointer index */
+    private _updatePointerIndex(base: string): void {
         const pointers = this._getPointers();
         if (!pointers.has(base)) {
             pointers.add(base);
@@ -376,7 +380,12 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         }
 
         world.setDynamicProperties(realChunks);
-        for (const key of [...deleteKeys, base, tmpBase]) {
+        this._cleanupKeys([...deleteKeys, base, tmpBase]);
+    }
+
+    /** Safely removes intermediate properties */
+    private _cleanupKeys(keys: string[]): void {
+        for (const key of keys) {
             try {
                 world.setDynamicProperty(key, undefined);
             } catch {
@@ -414,22 +423,28 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
     private _parseEntryData(rawData: string, chunkCount: number, keyStr: string): any {
         try {
             if (rawData.startsWith("\u0002")) {
-                const headerEnd = rawData.indexOf(":", 2);
-                if (headerEnd !== -1) {
-                    const expectedChunks = parseInt(rawData.slice(2, headerEnd), 10);
-                    if (!isNaN(expectedChunks) && chunkCount < expectedChunks) {
-                        console.warn(`[${this.name}] Corrupted entry for key "${keyStr}": expected ${expectedChunks} chunks, found ${chunkCount}`);
-                        return undefined;
-                    }
-                    const decompressed = LZCompressor.decompress(rawData.slice(headerEnd + 1));
-                    return decompressed.trim() ? JSON.parse(decompressed) : undefined;
-                }
+                return this._parseCompressedHeader(rawData, chunkCount, keyStr);
             }
             return JSON.parse(rawData);
         } catch (err) {
             console.warn(`[${this.name}] Failed to parse entry for key "${keyStr}":`, err);
             return undefined;
         }
+    }
+
+    /** Parses compressed entry header and decompresses content */
+    private _parseCompressedHeader(rawData: string, chunkCount: number, keyStr: string): any {
+        const headerEnd = rawData.indexOf(":", 2);
+        if (headerEnd === -1) return undefined;
+
+        const expectedChunks = parseInt(rawData.slice(2, headerEnd), 10);
+        if (!isNaN(expectedChunks) && chunkCount < expectedChunks) {
+            console.warn(`[${this.name}] Corrupted entry for key "${keyStr}": expected ${expectedChunks} chunks, found ${chunkCount}`);
+            return undefined;
+        }
+
+        const decompressed = LZCompressor.decompress(rawData.slice(headerEnd + 1));
+        return decompressed.trim() ? JSON.parse(decompressed) : undefined;
     }
 
     /**
@@ -487,9 +502,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         });
     }
 
-    /**
-     * Completely clears all keys, values, and index pointers associated with this database.
-     */
+    /** Completely clears all keys, values, and index pointers associated with this database */
     public async clear(): Promise<void> {
         const ctx = this._createLockContext();
 
@@ -501,10 +514,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         });
     }
 
-    /**
-     * Retrieves all valid [key, value] pairs.
-     * @param lockId Optional existing lock token context.
-     */
+    /** Retrieves all valid [key, value] pairs */
     public async entries(lockId?: string): Promise<[keyof T, T[keyof T]][]> {
         const pointers = this._getPointers();
         const result: [keyof T, T[keyof T]][] = [];
@@ -531,9 +541,7 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
         return typeof value !== "function" && typeof value !== "symbol";
     }
 
-    /**
-     * Evaluates stored entries against a validator and purges invalid entries.
-     */
+    /** Evaluates stored entries against a validator and purges invalid entries */
     public async clean(validator?: (key: keyof T, value: T[keyof T]) => boolean, options?: { silent?: boolean }): Promise<void> {
         const silent = options?.silent ?? false;
         const ctx = this._createLockContext();
@@ -546,16 +554,12 @@ export class OptimizedDatabase<T extends Record<string, DatabaseValueObject>> {
                 const isValid = validator ? validator(key, value) : this.isDefaultValid(value);
                 if (!isValid) {
                     await this.delete(key, ctx);
-                    if (!silent) {
-                        console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
-                    }
+                    if (!silent) console.warn(`[${this.name}] Deleted invalid entry "${String(key)}" with value:`, value);
                     deletedCount++;
                 }
             }
 
-            if (!silent) {
-                console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
-            }
+            if (!silent) console.log(`[${this.name}] Cleanup complete. Total deleted entries: ${deletedCount}`);
         });
     }
 
