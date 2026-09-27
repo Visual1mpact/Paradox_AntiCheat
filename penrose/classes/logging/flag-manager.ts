@@ -11,9 +11,6 @@ const dirtyPlayers = new Set<string>();
 
 let isFlushScheduled = false;
 
-/**
- * Manages player violation flag operations, caching, and database persistence.
- */
 export class FlagManager {
     /**
      * Initializes the background flush loop and runs an initial database integrity check.
@@ -117,8 +114,7 @@ export class FlagManager {
         if (!memoryRecord) return;
 
         try {
-            const fetchedRecord = flagsDB ? await flagsDB.get(playerId) : undefined;
-            const dbRecord: PlayerFlagRecord = fetchedRecord ?? {
+            const dbRecord: PlayerFlagRecord = (await flagsDB.get(playerId)) ?? {
                 playerName: memoryRecord.playerName,
                 totalViolations: 0,
                 flags: [],
@@ -128,9 +124,7 @@ export class FlagManager {
             dbRecord.totalViolations = memoryRecord.totalViolations;
             dbRecord.flags = memoryRecord.flags;
 
-            if (flagsDB) {
-                await flagsDB.set(playerId, dbRecord);
-            }
+            await flagsDB.set(playerId, dbRecord);
         } catch (err) {
             dirtyPlayers.add(playerId);
             console.warn(`[Paradox] Failed to flush flags for player ID ${playerId}:`, err);
@@ -139,26 +133,12 @@ export class FlagManager {
 
     /**
      * Scans and sanitizes the database on startup.
-     * Ignores internal database pointer chunks and temporary staging keys.
+     * Repairs structurally valid records and purges unreadable or corrupted entries.
      */
     public static async sanitizeDatabase(): Promise<void> {
         try {
             const allPropertyIds = world.getDynamicPropertyIds();
-
-            // Filter for flag records while ignoring internal system keys (e.g., flags/pointers/0, flags/key~tmp)
-            const flagKeys = allPropertyIds.filter((id) => {
-                if (!id.startsWith("flags/") && id !== "flags") return false;
-
-                const pathSegments = id.split("/");
-
-                // Ignore database index pointers (flags/pointers, flags/pointers/0, etc.)
-                if (pathSegments[1] === "pointers") return false;
-
-                // Ignore sub-chunks or temporary staging keys
-                if (id.includes("~tmp") || pathSegments.length > 2) return false;
-
-                return true;
-            });
+            const flagKeys = allPropertyIds.filter((id) => id.startsWith("flags/") || id.startsWith("flags"));
 
             for (const rawKey of flagKeys) {
                 const playerId = rawKey.includes("/") ? rawKey.split("/")[1] : rawKey;
@@ -172,11 +152,11 @@ export class FlagManager {
     }
 
     /**
-     * Verifies individual key integrity during sanitization safely.
+     * Verifies individual key integrity during sanitization.
      */
     private static async verifyAndCacheKey(rawKey: string, playerId: string): Promise<void> {
         try {
-            const rawRecord = flagsDB ? await flagsDB.get(playerId) : undefined;
+            const rawRecord = await flagsDB.get(playerId);
 
             if (rawRecord && FlagManager.isValidRecord(rawRecord)) {
                 flagCache.set(playerId, {
@@ -188,46 +168,18 @@ export class FlagManager {
             }
 
             console.warn(`[Paradox] Purging corrupted database key: ${rawKey}`);
-            if (flagsDB) {
-                await flagsDB.delete(playerId);
-            } else {
-                world.setDynamicProperty(rawKey, undefined);
-            }
+            await flagsDB.delete(playerId);
         } catch (readErr) {
             console.error(`[Paradox] Removing unreadable dynamic property: ${rawKey}`, readErr);
-            this.safePurgeDynamicProperty(rawKey);
-        }
-    }
-
-    /**
-     * Safely purges an unreadable or broken dynamic property identifier strictly without type casting.
-     */
-    private static safePurgeDynamicProperty(rawKey: string): void {
-        try {
-            if (flagsDB && "purgeUnreadableProperty" in flagsDB && typeof (flagsDB as { purgeUnreadableProperty?: Function }).purgeUnreadableProperty === "function") {
-                (flagsDB as { purgeUnreadableProperty: (key: string) => boolean }).purgeUnreadableProperty(rawKey);
-                return;
-            }
             world.setDynamicProperty(rawKey, undefined);
-        } catch (purgeErr) {
-            console.error(`[Paradox] Emergency purge failed for key "${rawKey}":`, purgeErr);
         }
     }
 
     /**
      * Helper to validate record schema structure.
      */
-    private static isValidRecord(data: unknown): data is PlayerFlagRecord {
-        return (
-            typeof data === "object" &&
-            data !== null &&
-            "playerName" in data &&
-            typeof (data as PlayerFlagRecord).playerName === "string" &&
-            "totalViolations" in data &&
-            typeof (data as PlayerFlagRecord).totalViolations === "number" &&
-            "flags" in data &&
-            Array.isArray((data as PlayerFlagRecord).flags)
-        );
+    private static isValidRecord(data: any): data is PlayerFlagRecord {
+        return typeof data === "object" && data !== null && typeof data.playerName === "string" && typeof data.totalViolations === "number" && Array.isArray(data.flags);
     }
 }
 
