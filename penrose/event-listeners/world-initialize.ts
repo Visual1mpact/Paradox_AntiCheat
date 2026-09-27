@@ -137,6 +137,8 @@ import { hotbarCheckCommand } from "../commands/settings/hotbar-check";
 import { startHotbarCheck, stopHotbarCheck } from "../modules/hotbar-check-module";
 import { startLockdown, stopLockdown } from "../modules/lockdown-modules";
 import { setClearanceCommand } from "../commands/moderation/set-clearance";
+import { FlagManager } from "../classes/logging/flag-manager";
+import { DatabaseStressTester } from "../classes/database/data-hive-stress";
 
 /** Player unique identifier type */
 type PlayerID = string;
@@ -147,6 +149,9 @@ interface Channel {
     Members: Record<PlayerID, string>;
     lastActive: number;
 }
+
+// For debugging with the database stress tester, uncomment the following lines to run the stress test suite on world initialization.
+const debug = false;
 
 let paradoxModulesDB: OptimizedDatabase<ParadoxModulesSchema>;
 let channelsDB: OptimizedDatabase<ChannelsSchema>;
@@ -569,6 +574,12 @@ export function subscribeToWorldInitialize() {
     EventCoordinator.subscribeAfter("worldLoad", async () => {
         await initializeSystems();
         PlayerCache.init();
+        // Safely execute initialization AFTER Database evaluation for flagsDB to ensure FlagManager is ready for logging.
+        FlagManager.init();
+        if (debug) {
+            const stressTester = new DatabaseStressTester();
+            await stressTester.runSuite();
+        }
         await onWorldInitialize();
     });
 }
