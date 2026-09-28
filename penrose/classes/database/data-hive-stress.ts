@@ -75,15 +75,17 @@ export class DatabaseStressTester {
     }
 
     /**
-     * Phase 2: Tests exact chunk boundary allocations using predictable high-entropy raw string generators.
+     * Phase 2: Tests exact chunk boundary allocation and multi-chunk splitting
+     * when high-entropy data causes LZW compression to expand, triggering
+     * uncompressed raw JSON fallback storage.
      */
     private async testChunkBoundaryEdgeCases(): Promise<void> {
-        console.log("\n[Phase 2] Testing chunk boundary edge cases with uncompressible raw streams...");
+        console.log("\n[Phase 2] Testing chunk boundary edge cases & raw string fallback splits...");
         const chunkSize = 30000;
 
         /**
-         * Generates uncompressible single-character string streams to avoid
-         * JSON array overhead while maintaining high entropy.
+         * Generates high-entropy string streams to force LZW compression expansion,
+         * ensuring the database falls back to raw string chunking.
          */
         const generateHighEntropyString = (length: number): string => {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
