@@ -150,8 +150,8 @@ interface Channel {
     lastActive: number;
 }
 
-// For debugging with the database stress tester, uncomment the following lines to run the stress test suite on world initialization.
-const debug = false;
+// For debugging with the database stress tester, uncomment the following line to run the stress test suite on world initialization.
+// const debug = true;
 
 let paradoxModulesDB: OptimizedDatabase<ParadoxModulesSchema>;
 let channelsDB: OptimizedDatabase<ChannelsSchema>;
