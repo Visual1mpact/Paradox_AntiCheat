@@ -1,7 +1,10 @@
 import { OptimizedDatabase } from "./data-hive";
 
+/** Global multiplier controlling overall stress test scale (e.g., 10 = 10x scale) */
+const STRESS_MULTIPLIER = 10;
+
 /**
- * Interface tracking execution metrics throughout the stress test run.
+ * Interface tracking execution metrics throughout the scaled stress test run.
  */
 interface TestMetrics {
     /** Combined counter tracking set, get, and clean operations executed */
@@ -13,7 +16,7 @@ interface TestMetrics {
 }
 
 /**
- * Harness for validating chunking, locking, compression, and purging performance.
+ * Harness for validating chunking, locking, compression, and purging performance under configurable load.
  */
 export class DatabaseStressTester {
     /** Target database instance used during stress evaluation */
@@ -27,9 +30,9 @@ export class DatabaseStressTester {
         this.db = new OptimizedDatabase("StressTestDB");
     }
 
-    /** Executes the complete suite of database stress tests */
+    /** Executes the complete suite of scaled database stress tests */
     public async runSuite(): Promise<void> {
-        console.warn("=== BEGINNING DATABASE STRESS TEST SUITE ===");
+        console.warn(`=== BEGINNING ${STRESS_MULTIPLIER}X SCALED DATABASE STRESS TEST SUITE ===`);
         this.metrics.startTime = Date.now();
 
         await this.db.clear();
@@ -45,13 +48,14 @@ export class DatabaseStressTester {
     }
 
     /**
-     * Phase 1: Launches 50 parallel asynchronous write/read operations to evaluate lock contention.
+     * Phase 1: Launches parallel asynchronous write/read operations based on STRESS_MULTIPLIER (50 * MULTIPLIER).
      */
     private async testConcurrentOperations(): Promise<void> {
-        console.log("\n[Phase 1] Launching 50 concurrent write/read operations...");
+        const targetOps = 50 * STRESS_MULTIPLIER;
+        console.log(`\n[Phase 1] Launching ${targetOps} concurrent write/read operations (${STRESS_MULTIPLIER}x scale)...`);
         const promises: Promise<void>[] = [];
 
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < targetOps; i++) {
             promises.push(
                 (async () => {
                     const key = `concurrent_${i}`;
@@ -71,7 +75,7 @@ export class DatabaseStressTester {
         }
 
         await Promise.all(promises);
-        console.log("[Phase 1 Complete] 50 operations processed.");
+        console.log(`[Phase 1 Complete] ${targetOps} operations processed.`);
     }
 
     /**
@@ -127,11 +131,13 @@ export class DatabaseStressTester {
     }
 
     /**
-     * Phase 3: Evaluates LZW compression ratio yield on highly repetitive text payloads.
+     * Phase 3: Evaluates LZW compression ratio yield on highly repetitive text payloads scaled by STRESS_MULTIPLIER.
      */
     private async testCompressionYield(): Promise<void> {
-        console.log("\n[Phase 3] Compressing large payload (75000 chars) to test LZW yield threshold...");
-        const largeString = "PARADOX_ANTICHEAT_".repeat(4166);
+        const repetitions = 4166 * STRESS_MULTIPLIER;
+        const totalChars = repetitions * "PARADOX_ANTICHEAT_".length;
+        console.log(`\n[Phase 3] Compressing large payload (${totalChars.toLocaleString()} chars - ${STRESS_MULTIPLIER}x scale) to test LZW yield threshold...`);
+        const largeString = "PARADOX_ANTICHEAT_".repeat(repetitions);
         const key = "large_payload";
 
         const start = Date.now();
@@ -145,17 +151,19 @@ export class DatabaseStressTester {
     }
 
     /**
-     * Phase 4: Inserts 500 keys to verify automatic index pointer chunking.
+     * Phase 4: Inserts keys based on STRESS_MULTIPLIER (500 * MULTIPLIER) to verify automatic index pointer chunking.
      */
     private async testPointerChunking(): Promise<void> {
-        console.log("\n[Phase 4] Generating 500 keys to test pointer index chunking...");
+        const targetKeys = 500 * STRESS_MULTIPLIER;
+        const logInterval = 100 * STRESS_MULTIPLIER;
+        console.log(`\n[Phase 4] Generating ${targetKeys.toLocaleString()} keys to test pointer index chunking (${STRESS_MULTIPLIER}x scale)...`);
 
-        for (let i = 1; i <= 500; i++) {
+        for (let i = 1; i <= targetKeys; i++) {
             this.metrics.totalOps++;
             await this.db.set(`index_key_${i}`, { val: i });
 
-            if (i % 100 === 0) {
-                console.log(`  -> Inserted ${i}/500 entries...`);
+            if (i % logInterval === 0) {
+                console.log(`  -> Inserted ${i}/${targetKeys} entries...`);
             }
         }
 
@@ -166,13 +174,15 @@ export class DatabaseStressTester {
     }
 
     /**
-     * Phase 5: Performs 100 dynamic read-modify-write loops across random keys.
+     * Phase 5: Performs dynamic read-modify-write loops scaled by STRESS_MULTIPLIER (100 * MULTIPLIER) across random keys.
      */
     private async testInterleavedReadWrite(): Promise<void> {
-        console.log("\n[Phase 5] Executing 100 interleaved dynamic read/write loops...");
+        const targetLoops = 100 * STRESS_MULTIPLIER;
+        const maxKeyIndex = 500 * STRESS_MULTIPLIER;
+        console.log(`\n[Phase 5] Executing ${targetLoops.toLocaleString()} interleaved dynamic read/write loops (${STRESS_MULTIPLIER}x scale)...`);
 
-        for (let i = 0; i < 100; i++) {
-            const targetKey = `index_key_${Math.floor(Math.random() * 500) + 1}`;
+        for (let i = 0; i < targetLoops; i++) {
+            const targetKey = `index_key_${Math.floor(Math.random() * maxKeyIndex) + 1}`;
 
             this.metrics.totalOps++;
             const existing = await this.db.get(targetKey);
@@ -223,12 +233,12 @@ export class DatabaseStressTester {
         const totalTimeSec = (Date.now() - this.metrics.startTime) / 1000;
         const throughput = this.metrics.totalOps / totalTimeSec;
 
-        console.warn("\n=== DATABASE STRESS TEST RESULTS ===");
+        console.warn(`\n=== ${STRESS_MULTIPLIER}X SCALED DATABASE STRESS TEST RESULTS ===`);
         console.log(`Total Execution Time : ${totalTimeSec.toFixed(2)} seconds`);
         console.log(`Total Operations Exec: ${this.metrics.totalOps}`);
         console.log(`Failed Operations    : ${this.metrics.failedOps}`);
         console.log(`Throughput Rate      : ${throughput.toFixed(2)} ops/sec`);
         console.log(`Total DB Storage Size: ${this.db.getTotalSizeFormatted()}`);
-        console.warn("====================================");
+        console.warn("=================================================");
     }
 }
