@@ -204,6 +204,32 @@ The `environment` command allows administrators to control the world's time and 
 
 ---
 
+## freecam
+### At A Glance
+The `freecam` command controls freecam mode, detaching the camera perspective from the player body to allow unrestricted 3D movement through the environment while keeping the player entity safely anchored in place.
+
+?> Required Clearance Level To Execute: `1` (`4` for camera teleport actions)
+
+> Usage: "{prefix}freecam [ enable | disable | tp <player> ]"   
+> Example: `{prefix}freecam enable`  
+> Example: `{prefix}freecam disable`  
+> Example: `{prefix}freecam tp Steve`  
+
+### **Options**
+- Running without arguments toggles freecam mode on or off.
+- `enable`: Detaches camera perspective, sets the player entity to Spectator mode to vanish and protect them, records starting location and view rotation, and disables standard body movement inputs.
+- `disable`: Clears freecam, restores movement input permissions, restores original game mode, and teleports the player back to their saved starting position and rotation.
+- `tp <player>`: Teleports the active freecam camera perspective directly to the location and view rotation of a target player. Automatically enables freecam if not already active.
+
+### **Behavior & Notes**
+- **Player Entity Protection:** Enabling freecam automatically switches the player entity into Spectator game mode so they remain stationary, vanished, and protected from mob targetting while controlling the detached camera. Stores original game mode in dynamic properties to restore upon disabling.
+- **Detached 3D Movement:** Moves the camera independently from the player body, calculating full 3D displacement vectors combining pitch and yaw look angles to support 3D flight relative to view orientation.
+- **Smart Descent Mechanics:** Uses toggle-based downward movement (Sneak input) that automatically cancels upon jumping, receiving directional movement input, or toggling un-sneak.
+- **Damage Protection:** Taking damage automatically cancels freecam mode, negates the incoming damage instance (`damage = 0`), and safely restores original movement permissions and game mode settings.
+- **GUI Integration:** Fully accessible in the Paradox GUI via ActionFormData, featuring actions to enable, disable, or select a target player from a dynamic dropdown to teleport the freecam camera. Explicitly notes clearance requirements (Level 1 base, Level 4 for camera teleportation).
+
+---
+
 ## gamerule
 ### At A Glance
 The `gamerule` command provides administrators with the ability to modify the world's internal rules directly. It supports all rules exposed by the Minecraft Scripting API, covering both boolean toggles and numeric settings.

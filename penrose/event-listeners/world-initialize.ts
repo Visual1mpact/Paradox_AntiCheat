@@ -139,6 +139,7 @@ import { startLockdown, stopLockdown } from "../modules/lockdown-modules";
 import { setClearanceCommand } from "../commands/moderation/set-clearance";
 import { FlagManager } from "../classes/logging/flag-manager";
 import { DatabaseStressTester } from "../classes/database/data-hive-stress";
+import { freecamCommand } from "../commands/moderation/freecam";
 
 /** Player unique identifier type */
 type PlayerID = string;
@@ -364,6 +365,7 @@ const allCommands: Command[] = [
     claimCommand,
     hotbarCheckCommand,
     setClearanceCommand,
+    freecamCommand,
 ];
 
 /**
