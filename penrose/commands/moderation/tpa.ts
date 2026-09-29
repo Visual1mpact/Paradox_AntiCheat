@@ -4,13 +4,148 @@ import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 
 /**
- * Represents the tpa command.
+ * Result structure for parsed coordinate arguments.
+ */
+interface CoordinateTarget {
+    readonly player: Player;
+    readonly location: { readonly x: number; readonly y: number; readonly z: number };
+}
+
+/**
+ * Result structure for parsed player-to-player arguments.
+ */
+interface PlayerTargetPair {
+    readonly source: Player;
+    readonly destination: Player;
+}
+
+/**
+ * Cleans and trims raw command argument strings.
+ *
+ * @param {string} name - Raw string.
+ * @returns {string} Cleaned string.
+ */
+function cleanName(name: string): string {
+    return name.trim().replace(/["@]/g, "");
+}
+
+/**
+ * Attempts to parse player and numeric X, Y, Z coordinates from arguments.
+ *
+ * @param {readonly string[]} args - Cleaned arguments array.
+ * @returns {CoordinateTarget | undefined} Parsed player and location, or undefined if invalid.
+ */
+function parseCoordinates(args: readonly string[]): CoordinateTarget | undefined {
+    if (args.length < 4) return undefined;
+
+    const zStr = args[args.length - 1];
+    const yStr = args[args.length - 2];
+    const xStr = args[args.length - 3];
+
+    if (!zStr || !yStr || !xStr) return undefined;
+
+    const x = parseFloat(xStr);
+    const y = parseFloat(yStr);
+    const z = parseFloat(zStr);
+
+    if (isNaN(x) || isNaN(y) || isNaN(z)) return undefined;
+
+    const playerName = args.slice(0, args.length - 3).join(" ");
+    const player = PlayerCache.getPlayerByName(playerName);
+
+    if (!player || !player.isValid) return undefined;
+
+    return { player, location: { x, y, z } };
+}
+
+/**
+ * Determines player-to-player targets based on positional argument splits.
+ *
+ * @param {readonly string[]} args - Cleaned arguments array.
+ * @returns {PlayerTargetPair | undefined} Pair of players, or undefined if not resolved.
+ */
+function parsePlayerPair(args: readonly string[]): PlayerTargetPair | undefined {
+    const len = args.length;
+    if (len < 2) return undefined;
+
+    if (len === 2) {
+        const p1 = PlayerCache.getPlayerByName(args[0]!);
+        const p2 = PlayerCache.getPlayerByName(args[1]!);
+        if (p1?.isValid && p2?.isValid) return { source: p1, destination: p2 };
+        return undefined;
+    }
+
+    for (let splitIndex = 1; splitIndex < len; splitIndex++) {
+        const name1 = args.slice(0, splitIndex).join(" ");
+        const name2 = args.slice(splitIndex).join(" ");
+
+        const p1 = PlayerCache.getPlayerByName(name1);
+        const p2 = PlayerCache.getPlayerByName(name2);
+
+        if (p1?.isValid && p2?.isValid) {
+            return { source: p1, destination: p2 };
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * Executes player-to-player teleportation with location cache lookup and safety checks.
+ *
+ * @param {ChatSendBeforeEvent} message - Message context.
+ * @param {Player} source - Source player to teleport.
+ * @param {Player} destination - Destination target player.
+ */
+function executePlayerTeleport(message: ChatSendBeforeEvent, source: Player, destination: Player): void {
+    const transform = PlayerLocationCache.getTransform(destination);
+    const location = transform?.location ?? destination.location;
+    const dimension = transform?.dimension ?? destination.dimension;
+    const rotation = transform?.rotation ?? destination.getRotation();
+
+    const result = source.tryTeleport(location, {
+        dimension,
+        rotation,
+        facingLocation: destination.getViewDirection(),
+        checkForBlocks: true,
+        keepVelocity: false,
+    });
+
+    if (!result) {
+        message.sender.sendMessage("§o§c[Paradox] Unable to teleport. Please try again.");
+    } else {
+        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleported '${source.name}§7' to '${destination.name}§7'.`);
+    }
+}
+
+/**
+ * Executes coordinate-based teleportation for a player.
+ *
+ * @param {ChatSendBeforeEvent} message - Message context.
+ * @param {Player} target - Target player to teleport.
+ * @param {{ x: number; y: number; z: number }} location - Destination grid coordinates.
+ */
+function executeCoordinateTeleport(message: ChatSendBeforeEvent, target: Player, location: { readonly x: number; readonly y: number; readonly z: number }): void {
+    const result = target.tryTeleport(location, {
+        checkForBlocks: true,
+        keepVelocity: false,
+    });
+
+    if (!result) {
+        message.sender.sendMessage("§o§c[Paradox] Unable to teleport to destination coordinates. Check for obstructive blocks.");
+    } else {
+        message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleported '${target.name}§7' to X: ${location.x}, Y: ${location.y}, Z: ${location.z}.`);
+    }
+}
+
+/**
+ * Represents the tpa command with player-to-player and grid coordinate teleportation capabilities.
  */
 export const tpaCommand: Command = {
     name: "tpa",
-    description: "Assistance to teleport to a player or vice versa.",
-    usage: "{prefix}tpa <player> <player>",
-    examples: [`{prefix}tpa Lucy Steve`, `{prefix}tpa @Steve @Lucy`, `{prefix}tpa help`],
+    description: "Assistance to teleport a player to another player or directly to grid coordinates.",
+    usage: "{prefix}tpa <player> <player | x y z>",
+    examples: [`{prefix}tpa Lucy Steve`, `{prefix}tpa Lucy 100 64 -200`, `{prefix}tpa @Steve @Lucy`],
     category: "Moderation",
     securityClearance: 3,
     icon: "textures/blocks/end_portal.png",
@@ -18,138 +153,90 @@ export const tpaCommand: Command = {
         formType: "ActionFormData",
         title: "Teleport Assistance (TPA)",
         description:
-            "Administratively relocate one player directly to the location of another.\n\n" +
-            "§7• Transfers the 'From' player to the exact coordinates of the 'To' player.\n" +
-            "§7• Synchronizes dimension, rotation, and view direction for a seamless transition.\n" +
+            "Administratively relocate one player directly to another player or specific grid coordinates.\n\n" +
+            "§7• Teleport to Player: Relocates the source player directly to the target player.\n" +
+            "§7• Teleport to Coordinates: Relocates the source player directly to explicit X, Y, Z coordinates.\n" +
+            "§7• Synchronizes dimension, rotation, and view direction when targeting players.\n" +
             "§7• Includes safety checks to prevent teleporting into solid blocks.\n\n",
         commandOrder: "command-arg",
         actions: [
             {
-                name: "Select Players",
+                name: "Teleport to Player",
                 command: undefined,
-                description: "Choose the players to teleport to/from.",
-                requiredFields: ["playerSelection"],
+                description: "Choose source and destination players.",
+                requiredFields: ["playerSelection", "targetPlayerSelection"],
                 generateModalForm: true,
                 icon: "textures/ui/icon_multiplayer.png",
+            },
+            {
+                name: "Teleport to Coordinates",
+                command: undefined,
+                description: "Choose source player and target X, Y, Z grid coordinates.",
+                requiredFields: ["playerSelection", "xCoordinate", "yCoordinate", "zCoordinate"],
+                generateModalForm: true,
+                icon: "textures/items/compass_item.png",
             },
         ],
         dynamicFields: [
             {
-                name: "\nTeleport From:",
+                name: "\nTeleport Player:",
                 type: "dropdown",
                 sourceType: "players",
                 requiredFields: ["playerSelection"],
             },
             {
-                name: "\nTeleport To:",
+                name: "\nDestination Player:",
                 type: "dropdown",
                 sourceType: "players",
-                requiredFields: ["playerSelection"],
+                requiredFields: ["targetPlayerSelection"],
+            },
+            {
+                name: "\nX Coordinate",
+                type: "text",
+                requiredFields: ["xCoordinate"],
+            },
+            {
+                name: "\nY Coordinate",
+                type: "text",
+                requiredFields: ["yCoordinate"],
+            },
+            {
+                name: "\nZ Coordinate",
+                type: "text",
+                requiredFields: ["zCoordinate"],
             },
         ],
     },
 
     /**
      * Executes the tpa command.
+     *
      * @param {ChatSendBeforeEvent | undefined} message - The message object.
      * @param {string[]} args - The command arguments.
      */
-    execute: (message?: ChatSendBeforeEvent, args: string[] = []) => {
+    execute: (message?: ChatSendBeforeEvent, args: string[] = []): void => {
         if (!message) return;
-        // Prevent command if player is imprisoned
-        const isImprisoned = message.sender.getDynamicProperty("prisonLocation"); // matches PRISON_LOCATION_PROPERTY
+
+        const isImprisoned = message.sender.getDynamicProperty("prisonLocation");
         if (isImprisoned) {
-            message.sender.sendMessage(`§o§c[Paradox] You cannot use the tpa command while imprisoned!`);
+            message.sender.sendMessage("§o§c[Paradox] You cannot use the tpa command while imprisoned!");
             return;
         }
 
-        /**
-         * Function to look up a player by name and retrieve the player object.
-         * @param {string} playerName - The name of the player to look up.
-         * @returns {Player | undefined} The player object corresponding to the provided player name, or undefined if not found.
-         */
-        function getPlayerObject(playerName: string): Player | undefined {
-            return PlayerCache.getPlayerByName(playerName);
-        }
+        const cleanedArgs = args.map(cleanName);
 
-        /**
-         * Cleans and trims a player name string.
-         * @param {string} name - The player name to clean.
-         * @returns {string} The cleaned player name.
-         */
-        function cleanName(name: string): string {
-            return name.trim().replace(/["@]/g, "");
-        }
-
-        /**
-         * Determines player names from arguments and retrieves corresponding player objects.
-         * @param {string[]} args - The command arguments.
-         * @returns {[Player | undefined, Player | undefined]} The player objects corresponding to the provided arguments.
-         */
-        function determinePlayers(args: string[]): [Player | undefined, Player | undefined] {
-            const [arg1 = "", arg2 = "", arg3 = "", arg4 = ""] = args.map(cleanName);
-
-            if (args.length === 2) {
-                return [getPlayerObject(arg1), getPlayerObject(arg2)];
-            }
-
-            if (args.length === 4) {
-                return [getPlayerObject(`${arg1} ${arg2}`), getPlayerObject(`${arg3} ${arg4}`)];
-            }
-
-            if (args.length === 3) {
-                const possibleNames: [string, string][] = [
-                    [`${arg1} ${arg2}`, arg3],
-                    [arg1, `${arg2} ${arg3}`],
-                ];
-
-                for (const [name1, name2] of possibleNames) {
-                    const player1 = getPlayerObject(name1);
-                    const player2 = getPlayerObject(name2);
-                    if (player1 && player1.isValid && player2 && player2.isValid) {
-                        return [player1, player2];
-                    }
-                }
-            }
-
-            return [undefined, undefined];
-        }
-
-        const [target1, target2] = determinePlayers(args);
-
-        if (!target1 || !target2) {
-            message.sender.sendMessage("§o§c[Paradox] Please provide at least two valid player names.");
+        const coordTarget = parseCoordinates(cleanedArgs);
+        if (coordTarget) {
+            executeCoordinateTeleport(message, coordTarget.player, coordTarget.location);
             return;
         }
 
-        if (!target1.isValid) {
-            message.sender.sendMessage(`§o§c[Paradox] Player '${target1.name}§c' not found or not valid.`);
+        const playerPair = parsePlayerPair(cleanedArgs);
+        if (playerPair) {
+            executePlayerTeleport(message, playerPair.source, playerPair.destination);
             return;
         }
 
-        if (!target2.isValid) {
-            message.sender.sendMessage(`§o§c[Paradox] Player '${target2.name}§c' not found or not valid.`);
-            return;
-        }
-
-        // Fetch target2 transform from location cache
-        const transform2 = PlayerLocationCache.getTransform(target2);
-        const destinationLocation = transform2?.location ?? target2.location;
-        const destinationDimension = transform2?.dimension ?? target2.dimension;
-        const destinationRotation = transform2?.rotation ?? target2.getRotation();
-
-        const result = target1.tryTeleport(destinationLocation, {
-            dimension: destinationDimension,
-            rotation: destinationRotation,
-            facingLocation: target2.getViewDirection(),
-            checkForBlocks: true,
-            keepVelocity: false,
-        });
-
-        if (!result) {
-            message.sender.sendMessage("§o§c[Paradox] Unable to teleport. Please try again.");
-        } else {
-            message.sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleported '${target1.name}§7' to '${target2.name}§7'.`);
-        }
+        message.sender.sendMessage("§o§c[Paradox] Invalid arguments. Provide two player names or a player name followed by X Y Z coordinates.");
     },
 };

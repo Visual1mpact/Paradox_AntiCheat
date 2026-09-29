@@ -567,27 +567,32 @@ The `setclearance` command allows administrators to dynamically alter the securi
 
 ## tpa
 ### At A Glance
-The `tpa` command allows players to teleport to one another, streamlining coordination and movement across the server. It ensures proper handling of multi-word player names and prevents teleportation for imprisoned players.
+The `tpa` command allows players to teleport directly to another player or to specific grid coordinates, streamlining coordination and movement across the server. It handles multi-word player names, validates destination coordinates, and prevents teleportation for imprisoned players.
 
 ?> Required Clearance Level To Execute: `3`
 
-> Usage: ":tpa <player> <player>"  
+> Usage: ":tpa <player> <player | x y z>"  
 > Example: :tpa Lucy Steve  
-> Example: :tpa @Steve @Lucy  
+> Example: :tpa Lucy 100 64 -200  
+> Example: :tpa Steve Lucy  
 
 ### **Behavior & Rules**
-- **Player Selection:**
+- **Player & Target Selection:**
   - Accepts one or two-word player names. Quotes are optional for names containing spaces.
-  - Players must exist and be valid; otherwise, the command fails.
+  - Supports targeting either another player or specific X, Y, Z grid coordinates.
+  - Target players must exist and be valid; otherwise, the command fails.
 - **Restrictions:**
   - Cannot be used if the sender is imprisoned.
 - **Teleportation Logic:**
-  - Teleports the first specified player to the second player’s current location.
-  - Maintains dimension and rotation; ensures no block collision and resets velocity.
+  - **Player Destination:** Teleports the specified player to the target player's current location, synchronizing dimension, rotation, and view direction.
+  - **Coordinate Destination:** Teleports the specified player directly to the target X, Y, Z coordinates.
+  - Both modes include safety checks to prevent teleporting into solid blocks and reset velocity upon arrival.
 - **Feedback Messages:**
-  - Success: `Teleported '<Player1>' to '<Player2>'.`
-  - Failure: `Unable to teleport. Please try again.`
-  - Invalid player: `Player '<PlayerName>' not found or not valid.`
+  - Success (Player): `Teleported '<Player1>' to '<Player2>'.`
+  - Success (Coordinates): `Teleported '<Player>' to X: <x>, Y: <y>, Z: <z>.`
+  - Failure (Block Obstruction): `Unable to teleport to destination coordinates. Check for obstructive blocks.`
+  - Failure (General): `Unable to teleport. Please try again.`
+  - Invalid Arguments: `Invalid arguments. Provide two player names or a player name followed by X Y Z coordinates.`
 
 ---
 
