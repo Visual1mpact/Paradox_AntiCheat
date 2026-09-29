@@ -1,5 +1,5 @@
 import { CustomForm, ObservableNumber, ObservableString, ObservableBoolean, DataDrivenScreenClosedReason } from "@minecraft/server-ui";
-import { Container, EnchantmentType, EnchantmentTypes, ItemStack, Player } from "@minecraft/server";
+import { Container, EnchantmentType, EnchantmentTypes, ItemType, ItemTypes, ItemStack, Player } from "@minecraft/server";
 import { PlayerCache } from "../../classes/cache/player-cache";
 
 interface DDUIState {
@@ -14,12 +14,16 @@ interface DDUIState {
     transferTargetPlayer: ObservableNumber;
     newItemAmount: ObservableString;
     targetSwapSlot: ObservableString;
+    addItemTypeId: ObservableString;
+    addItemAmount: ObservableString;
+    isSlotRequired: ObservableBoolean;
     isEditNameLore: ObservableBoolean;
     isEditEnchantments: ObservableBoolean;
     isRepairItem: ObservableBoolean;
     isTransferItem: ObservableBoolean;
     isEditAmount: ObservableBoolean;
     isSwapSlot: ObservableBoolean;
+    isAddItem: ObservableBoolean;
 }
 
 interface DropdownOption {
@@ -30,6 +34,7 @@ interface DropdownOption {
 // Module-scoped persistent caches (lazily initialized to prevent early execution errors)
 let enchantmentListCache: readonly EnchantmentType[] | null = null;
 let enchantmentOptionsCache: DropdownOption[] | null = null;
+let itemTypeListCache: readonly ItemType[] | null = null;
 
 const ACTION_OPTIONS: readonly DropdownOption[] = [
     { label: "View Inventory", value: 0 },
@@ -39,6 +44,7 @@ const ACTION_OPTIONS: readonly DropdownOption[] = [
     { label: "Transfer Item to Another Player", value: 4 },
     { label: "Edit Stack Amount", value: 5 },
     { label: "Swap Slots", value: 6 },
+    { label: "Add Item to Player", value: 7 },
 ];
 
 /**
@@ -66,6 +72,14 @@ function ensureEnchantmentCache(): void {
 }
 
 /**
+ * Initializes static item type array lazily.
+ */
+function ensureItemTypeCache(): void {
+    if (itemTypeListCache !== null) return;
+    itemTypeListCache = ItemTypes.getAll();
+}
+
+/**
  * Initializes and binds all DDUI reactive state observables.
  *
  * @returns {DDUIState} Bundle of initialized DDUI state observables.
@@ -83,12 +97,16 @@ function createDDUIState(): DDUIState {
         transferTargetPlayer: new ObservableNumber(0, { clientWritable: true }),
         newItemAmount: new ObservableString("1", { clientWritable: true }),
         targetSwapSlot: new ObservableString("", { clientWritable: true }),
+        addItemTypeId: new ObservableString("minecraft:apple", { clientWritable: true }),
+        addItemAmount: new ObservableString("1", { clientWritable: true }),
+        isSlotRequired: new ObservableBoolean(true),
         isEditNameLore: new ObservableBoolean(false),
         isEditEnchantments: new ObservableBoolean(false),
         isRepairItem: new ObservableBoolean(false),
         isTransferItem: new ObservableBoolean(false),
         isEditAmount: new ObservableBoolean(false),
         isSwapSlot: new ObservableBoolean(false),
+        isAddItem: new ObservableBoolean(false),
     };
 }
 
@@ -304,7 +322,6 @@ function applyEnchant(container: Container, item: ItemStack, slot: number, state
     enchantComp.removeEnchantment(selectedEnchantment);
 
     if (inputLevel > 0) {
-        // Clamp requested level strictly to max level defined by game API
         const clampedLevel = Math.min(inputLevel, selectedEnchantment.maxLevel);
         const enchantment = { type: selectedEnchantment, level: clampedLevel };
 
@@ -383,6 +400,30 @@ function swapSlots(container: Container, sourceSlot: number, state: DDUIState): 
 }
 
 /**
+ * Creates and appends a new item stack to the player's container automatically.
+ *
+ * @param {Container} container - Target inventory container.
+ * @param {DDUIState} state - Active DDUI state.
+ */
+function addItemToContainer(container: Container, state: DDUIState): void {
+    let rawTypeId = state.addItemTypeId.getData().trim();
+    if (!rawTypeId) return;
+
+    if (!rawTypeId.includes(":")) {
+        rawTypeId = `minecraft:${rawTypeId}`;
+    }
+
+    const itemType = ItemTypes.get(rawTypeId);
+    if (!itemType) return;
+
+    const parsedAmount = parseInt(state.addItemAmount.getData());
+    const amount = isNaN(parsedAmount) || parsedAmount <= 0 ? 1 : parsedAmount;
+
+    const newItem = new ItemStack(itemType, amount);
+    container.addItem(newItem);
+}
+
+/**
  * Dispatches modification action execution depending on selected action mode option.
  *
  * @param {Container} container - Target inventory container.
@@ -392,8 +433,12 @@ function swapSlots(container: Container, sourceSlot: number, state: DDUIState): 
  * @param {DDUIState} state - Active DDUI state object.
  */
 function handleActionExecute(container: Container, slot: number, option: number, playerNames: readonly string[], state: DDUIState): void {
-    const item = container.getItem(slot);
+    if (option === 7) {
+        addItemToContainer(container, state);
+        return;
+    }
 
+    const item = container.getItem(slot);
     if (!item && option >= 1 && option <= 5) return;
 
     switch (option) {
@@ -436,10 +481,17 @@ function applyChanges(player: Player, playerNames: readonly string[], state: DDU
     const container = playerObject?.getComponent("minecraft:inventory")?.container;
     if (!container) return;
 
+    const option = state.selectedOption.getData();
+
+    if (option === 7) {
+        handleActionExecute(container, 0, option, playerNames, state);
+        updateInventoryText(state.selectedPlayer.getData(), playerNames, state.inventoryText);
+        return;
+    }
+
     const slot = parseInt(state.selectedSlot.getData());
     if (isNaN(slot) || slot < 0 || slot >= container.size) return;
 
-    const option = state.selectedOption.getData();
     handleActionExecute(container, slot, option, playerNames, state);
 
     if (option === 0) {
@@ -465,14 +517,16 @@ function setupSubscriptions(state: DDUIState, playerNames: readonly string[]): v
     });
 
     state.selectedOption.subscribe((value) => {
+        state.isSlotRequired.setData(value !== 7);
         state.isEditNameLore.setData(value === 1);
         state.isEditEnchantments.setData(value === 2);
         state.isRepairItem.setData(value === 3);
         state.isTransferItem.setData(value === 4);
         state.isEditAmount.setData(value === 5);
         state.isSwapSlot.setData(value === 6);
+        state.isAddItem.setData(value === 7);
 
-        if (value === 0) {
+        if (value === 0 || value === 7) {
             updateInventoryText(state.selectedPlayer.getData(), playerNames, state.inventoryText);
         } else {
             updateItemFields(state.selectedSlot.getData(), playerNames, state);
@@ -485,7 +539,7 @@ function setupSubscriptions(state: DDUIState, playerNames: readonly string[]): v
  *
  * Designed to allow admins to inspect player inventories, edit names/lore,
  * modify enchantments, repair durability, transfer items between players,
- * change stack quantities, or swap slot contents.
+ * change stack quantities, swap slot contents, or give new items to target player.
  *
  * @param {Player} player - The command executor player.
  */
@@ -493,6 +547,7 @@ export function showInventoryEditor(player: Player): void {
     if (!player?.isValid) return;
 
     ensureEnchantmentCache();
+    ensureItemTypeCache();
 
     const state = createDDUIState();
     const playerNames = PlayerCache.getPlayerNamesArray();
@@ -522,7 +577,7 @@ export function showInventoryEditor(player: Player): void {
         .spacer()
         .dropdown("select an action", state.selectedOption, ACTION_OPTIONS as DropdownOption[])
         .divider()
-        .textField("Enter slot number ", state.selectedSlot)
+        .textField("Enter slot number ", state.selectedSlot, { visible: state.isSlotRequired })
         .textField("New name data", state.newName, { visible: state.isEditNameLore })
         .textField("New lore data", state.newLore, { visible: state.isEditNameLore })
         .dropdown("Select enchantment", state.enchantmentIndex, enchantmentOptionsCache!, { visible: state.isEditEnchantments })
@@ -530,6 +585,8 @@ export function showInventoryEditor(player: Player): void {
         .dropdown("Select target player for transfer", state.transferTargetPlayer, playerDropdownOptions, { visible: state.isTransferItem })
         .textField("New stack amount", state.newItemAmount, { visible: state.isEditAmount })
         .textField("Target slot to swap with", state.targetSwapSlot, { visible: state.isSwapSlot })
+        .textField("Item Type ID (e.g. diamond)", state.addItemTypeId, { visible: state.isAddItem })
+        .textField("Item Amount to Add", state.addItemAmount, { visible: state.isAddItem })
         .button("Apply Changes", () => {
             applyChanges(player, playerNames, state);
         })
