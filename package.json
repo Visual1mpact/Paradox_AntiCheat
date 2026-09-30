@@ -66,7 +66,9 @@
         "docs": "node bin/server.js",
         "check-naming": "node bin/tree-format.js",
         "build": "npm run check-naming && node bin/build.js --zip",
+        "build:test": "npm run check-naming && node bin/build.js --zip --test",
         "dist": "npm run check-naming && node bin/build.js --zip --mcpack",
+        "dist:test": "npm run check-naming && node bin/build.js --zip --mcpack --test",
         "test": "npm run check-naming && node bin/build.js --zip --server"
     }
 }

@@ -17,6 +17,7 @@ const BUILD_DIR = "build";
 const wantMcpack = process.argv.includes("--mcpack");
 const wantZip = process.argv.includes("--zip");
 const skipArchive = process.argv.includes("--server");
+const isTestBuild = process.argv.includes("--test");
 
 /**
  * Logs an error message and terminates the process with exit code 1.
@@ -120,7 +121,8 @@ async function syncVersion() {
  */
 async function prepareManifest(type) {
     const packageJson = await fs.readJson("package.json");
-    const archiveName = type === "mcpack" ? `Paradox-AntiCheat-v${packageJson.version}-REALMS.mcpack` : `Paradox-AntiCheat-v${packageJson.version}-BDS.zip`;
+    const suffix = isTestBuild ? "-unofficial" : "";
+    const archiveName = type === "mcpack" ? `Paradox-AntiCheat${suffix}-v${packageJson.version}-REALMS.mcpack` : `Paradox-AntiCheat${suffix}-v${packageJson.version}-BDS.zip`;
 
     const manifestPath = path.join(BUILD_DIR, "manifest.json");
     const manifest = await fs.readJson("manifest.json");
@@ -243,7 +245,7 @@ async function runServerTest() {
  */
 async function main() {
     await syncVersion();
-    console.log(`Starting build pipeline | mcpack=${wantMcpack} | zip=${wantZip} | server=${skipArchive}\n`);
+    console.log(`Starting build pipeline | mcpack=${wantMcpack} | zip=${wantZip} | server=${skipArchive} | test=${isTestBuild}\n`);
 
     console.log("[Build] Running strict TypeScript type check...");
     run("npx", ["tsc", "--noEmit"]);
