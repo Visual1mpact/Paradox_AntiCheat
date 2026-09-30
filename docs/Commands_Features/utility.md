@@ -206,7 +206,7 @@ The `environment` command allows administrators to control the world's time and 
 
 ## freecam
 ### At A Glance
-The `freecam` command controls freecam mode, detaching the camera perspective from the player body to allow unrestricted 3D movement through the environment while keeping the player entity safely anchored in place.
+The `freecam` command controls freecam mode, detaching the camera perspective from the player body to allow unrestricted 3D movement through the environment with dynamic speed control while keeping the player entity safely anchored in place.
 
 ?> Required Clearance Level To Execute: `1` (`4` for camera teleport actions)
 
@@ -224,7 +224,7 @@ The `freecam` command controls freecam mode, detaching the camera perspective fr
 ### **Behavior & Notes**
 - **Player Entity Protection:** Enabling freecam automatically switches the player entity into Spectator game mode so they remain stationary, vanished, and protected from mob targetting while controlling the detached camera. Stores original game mode in dynamic properties to restore upon disabling.
 - **Detached 3D Movement:** Moves the camera independently from the player body, calculating full 3D displacement vectors combining pitch and yaw look angles to support 3D flight relative to view orientation.
-- **Smart Descent Mechanics:** Uses toggle-based downward movement (Sneak input) that automatically cancels upon jumping, receiving directional movement input, or toggling un-sneak.
+- **Dynamic Speed Control:** Pressing `Jump` increases camera movement speed (+0.1x per press, up to 5.0x), while pressing `Sneak` decreases camera movement speed (-0.1x per press, down to 0.1x). `Jump` and `Sneak` inputs are reserved strictly for speed adjustments and do not cause vertical positional movement.
 - **Damage Protection:** Taking damage automatically cancels freecam mode, negates the incoming damage instance (`damage = 0`), and safely restores original movement permissions and game mode settings.
 - **GUI Integration:** Fully accessible in the Paradox GUI via ActionFormData, featuring actions to enable, disable, or select a target player from a dynamic dropdown to teleport the freecam camera. Explicitly notes clearance requirements (Level 1 base, Level 4 for camera teleportation).
 

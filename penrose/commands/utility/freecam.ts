@@ -1,4 +1,4 @@
-import { ChatSendBeforeEvent, GameMode, InputButton, InputPermissionCategory, Player, EntityHurtBeforeEvent, system, world, Vector3 } from "@minecraft/server";
+import { ChatSendBeforeEvent, GameMode, InputPermissionCategory, Player, EntityHurtBeforeEvent, system, world, Vector3, InputButton } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { EventCoordinator } from "../../classes/core/event-coordinator";
@@ -10,8 +10,8 @@ let isEventsSubscribed = false;
 // Track active camera positions, speeds, and input states
 const cameraPositions = new Map<string, Vector3>();
 const cameraSpeed = new Map<string, number>();
-const lastSlotIndex = new Map<string, number>();
 const sneakToggleState = new Map<string, boolean>();
+const lastButtonState = new Map<string, { jump: boolean; sneak: boolean }>();
 
 /**
  * Cleans and trims raw player name argument strings.
@@ -33,7 +33,7 @@ function cleanName(name: string): string {
  * @returns {boolean} True if player should move downward.
  */
 function isPlayerDescending(player: Player, isJumping: boolean, hasMovementInput: boolean): boolean {
-    const buttonState = player.inputInfo.getButtonState(InputButton.Sneak);
+    const buttonState = player.inputInfo.getButtonState("Sneak" as any);
     let isDescending = sneakToggleState.get(player.id) ?? false;
 
     if (buttonState === "Pressed") {
@@ -49,12 +49,45 @@ function isPlayerDescending(player: Player, isJumping: boolean, hasMovementInput
 }
 
 /**
+ * Updates freecam speed dynamically based on Jump and Sneak button presses.
+ * Executes in O(1) complexity.
+ *
+ * @param {Player} player - Target player entity.
+ * @param {boolean} isJumping - Current jump button pressed state.
+ * @param {boolean} isSneaking - Current sneak button pressed state.
+ * @returns {number} Updated camera speed.
+ */
+function updateCameraSpeed(player: Player, isJumping: boolean, isSneaking: boolean): number {
+    let speed = cameraSpeed.get(player.id) ?? 0.5;
+    const lastState = lastButtonState.get(player.id) ?? { jump: false, sneak: false };
+
+    // Trigger speed adjustment on initial button press state change
+    const jumpPressed = isJumping && !lastState.jump;
+    const sneakPressed = isSneaking && !lastState.sneak;
+
+    if (jumpPressed || sneakPressed) {
+        speed = Math.max(0.1, Math.min(speed + (jumpPressed ? 0.1 : -0.1), 5));
+        cameraSpeed.set(player.id, speed);
+        player.onScreenDisplay.setActionBar(`§2[§7Paradox§2] §7Freecam speed: §e${speed.toFixed(1)}x§r`);
+    }
+
+    lastButtonState.set(player.id, { jump: isJumping, sneak: isSneaking });
+    return speed;
+}
+
+/**
  * Updates freecam perspective and positions the camera independently from the player body.
  *
  * @param {Player} player - Target player entity.
  */
 function updateCamera(player: Player): void {
-    const speed = 0.5;
+    const isJumping = player.inputInfo.getButtonState("Jump" as InputButton) === "Pressed";
+    const moveInput = player.inputInfo.getMovementVector();
+    const hasMovementInput = moveInput.x !== 0 || moveInput.y !== 0;
+
+    const isSneaking = isPlayerDescending(player, isJumping, hasMovementInput);
+    const speed = updateCameraSpeed(player, isJumping, isSneaking);
+
     let currentPos = cameraPositions.get(player.id);
 
     player.inputPermissions.setPermissionCategory(InputPermissionCategory.Movement, false);
@@ -66,12 +99,6 @@ function updateCamera(player: Player): void {
             z: headPos.z,
         };
     }
-
-    const moveInput = player.inputInfo.getMovementVector();
-    const hasMovementInput = moveInput.x !== 0 || moveInput.y !== 0;
-
-    const isJumping = player.inputInfo.getButtonState(InputButton.Jump) === "Pressed";
-    const isSneaking = isPlayerDescending(player, isJumping, hasMovementInput);
 
     // Get true 3D unit direction vector (pitch + yaw combined) from current player view orientation
     const viewDir: Vector3 = player.getViewDirection();
@@ -89,9 +116,13 @@ function updateCamera(player: Player): void {
         z: right.z / rightLen,
     };
 
+    // Ignore vertical movement completely when holding jump or sneak (reserved strictly for speed adjustment)
+    const isSpeedControlActive = isJumping || isSneaking;
+    const verticalMovement = isSpeedControlActive ? 0 : 0;
+
     // Calculate full 3D displacement vector based on view look direction
     const dx = (moveInput.y * viewDir.x - moveInput.x * rightNormalized.x) * speed;
-    const dy = (moveInput.y * viewDir.y + ((isJumping ? 1 : 0) - (isSneaking ? 1 : 0))) * speed;
+    const dy = (moveInput.y * viewDir.y + verticalMovement) * speed;
     const dz = (moveInput.y * viewDir.z - moveInput.x * rightNormalized.z) * speed;
 
     currentPos.x += dx;
@@ -153,8 +184,8 @@ function ensureLoopRunning(): void {
                 freecamUsers.delete(playerId);
                 cameraPositions.delete(playerId);
                 cameraSpeed.delete(playerId);
-                lastSlotIndex.delete(playerId);
                 sneakToggleState.delete(playerId);
+                lastButtonState.delete(playerId);
                 continue;
             }
             updateCamera(player);
@@ -237,8 +268,8 @@ export function disable(player: Player): void {
 
     cameraPositions.delete(player.id);
     cameraSpeed.delete(player.id);
-    lastSlotIndex.delete(player.id);
     sneakToggleState.delete(player.id);
+    lastButtonState.delete(player.id);
 
     if (freecamUsers.size === 0) {
         cleanupActiveSession();
@@ -311,7 +342,7 @@ function sendUsageMessage(player: Player): void {
  */
 export const freecamCommand: Command = {
     name: "freecam",
-    description: "Toggles freecam spectator mode to detach camera movement.",
+    description: "Toggles freecam spectator mode to detach camera movement with dynamic speed control.",
     usage: "{prefix}freecam [ enable | disable | tp <player> ]",
     examples: ["{prefix}freecam enable", "{prefix}freecam disable", "{prefix}freecam tp Steve"],
     category: "Utility",
@@ -325,6 +356,8 @@ export const freecamCommand: Command = {
             "§7• §fEnable Freecam§7: Detaches camera perspective, enables vanish (Spectator mode), and tracks starting position.\n" +
             "§7• §fDisable Freecam§7: Restores normal movement permissions, original position, original game mode, and camera perspective.\n" +
             "§7• §fTeleport Camera§7: Relocates camera position directly to a target player.\n\n" +
+            "§7Controls & Adjustments:\n" +
+            "§7• Press §eJump§7 / §eSneak§7: Increase or decrease camera movement speed (does not move position vertically).\n\n" +
             "§7Rules & Behavior:\n" +
             "§7• Requires security clearance level 1 (level 4 required for camera teleportation).\n" +
             "§7• Automatically disables and prevents damage when taking hits.\n\n",
