@@ -8,6 +8,7 @@ import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 import { chestLockDB, homesDB, waypointsDB } from "../../event-listeners/world-initialize";
 import { LandClaimManager } from "../utility/land-claim";
 import { DynamicField, GUIInstructions, ActionFormButton, UIProviderRegistry } from "../../types/gui-schema";
+import { restrictionManager } from "../../classes/core/restriction-manager";
 
 /** Cache static icon path mappings to avoid object allocations in hot paths */
 const CATEGORY_ICONS: Record<string, string> = {
@@ -126,35 +127,41 @@ export class GUIManager {
      * @returns {Map<string, Command[]>} Pre-indexed map of category to commands
      */
     private getSortedCategories(clearance: number): Map<string, Command[]> {
-        let cached = GUIManager.commandCache.get(clearance);
-        if (cached) return cached;
-
         const commands = getCommandHandler().getRegisteredCommands();
-        cached = new Map<string, Command[]>();
+        const activeCategories = new Map<string, Command[]>();
 
         for (let i = 0; i < commands.length; i++) {
             const cmd = commands[i]!;
-            if (cmd.name !== "gui" && cmd.securityClearance <= clearance) {
-                let categoryList = cached.get(cmd.category);
+
+            // Ignore the GUI command itself
+            if (cmd.name === "gui") continue;
+
+            // 1. ALWAYS check restriction first (applies to ALL players regardless of clearance)
+            const restriction = restrictionManager.checkRestriction(this.player, cmd.name, cmd.category);
+            if (restriction !== null) {
+                continue; // Skip restricted commands so they don't appear in GUI
+            }
+
+            // 2. ONLY apply security clearance check if the command is NOT restricted
+            if (cmd.securityClearance <= clearance) {
+                let categoryList = activeCategories.get(cmd.category);
                 if (!categoryList) {
                     categoryList = [];
-                    cached.set(cmd.category, categoryList);
+                    activeCategories.set(cmd.category, categoryList);
                 }
                 categoryList.push(cmd);
             }
         }
 
-        // Sort categories and inner commands once globally
         const sortedCategories = new Map<string, Command[]>();
-        const sortedCategoryNames = Array.from(cached.keys()).sort((a, b) => a.localeCompare(b));
+        const sortedCategoryNames = Array.from(activeCategories.keys()).sort((a, b) => a.localeCompare(b));
 
         for (let i = 0; i < sortedCategoryNames.length; i++) {
             const catName = sortedCategoryNames[i]!;
-            const catCommands = cached.get(catName)!.sort((a, b) => a.name.localeCompare(b.name));
+            const catCommands = activeCategories.get(catName)!.sort((a, b) => a.name.localeCompare(b.name));
             sortedCategories.set(catName, catCommands);
         }
 
-        GUIManager.commandCache.set(clearance, sortedCategories);
         return sortedCategories;
     }
 
@@ -367,6 +374,12 @@ export class GUIManager {
             }
             await this.showModalForm(fields, title, command, action.command ?? [], crypto, commandOrder, requiredFields);
         } else {
+            // --- RESTRICTION GUARD BEFORE EXECUTION ---
+            const restriction = restrictionManager.checkRestriction(this.player, command.name, command.category);
+            if (restriction) {
+                this.player.sendMessage(restriction);
+                return;
+            }
             const chatSendBeforeEvent = { cancel: false, message: "", sender: this.player };
             command.execute(chatSendBeforeEvent, action.command ?? [], crypto ? CryptoES : undefined);
         }
@@ -440,6 +453,13 @@ export class GUIManager {
 
             const args = this.parseFormResponse(response, fields, requiredFields);
             const finalCommand = this.buildCommandString(commandOrder, commandArray, args);
+
+            // --- RESTRICTION GUARD BEFORE EXECUTION ---
+            const restriction = restrictionManager.checkRestriction(this.player, command.name, command.category);
+            if (restriction) {
+                this.player.sendMessage(restriction);
+                return;
+            }
 
             const chatSendBeforeEvent = { cancel: false, message: "", sender: this.player };
             command.execute(chatSendBeforeEvent, finalCommand, cryptoES ? CryptoES : undefined);

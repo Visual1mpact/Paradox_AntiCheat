@@ -3,6 +3,7 @@ import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 import { PlayerLocationCache } from "../../classes/cache/player-location-cache";
 import { EventCoordinator } from "../../classes/core/event-coordinator";
+import { restrictionManager } from "../../classes/core/restriction-manager";
 
 interface TeleportRequest {
     sender: Player;
@@ -104,13 +105,6 @@ export const tprCommand: Command = {
         // Retrieve the current prefix from dynamic properties
         const prefix = (world.getDynamicProperty("__prefix") as string) ?? ":";
 
-        // Prevent command if player is imprisoned
-        const isImprisoned = sender.getDynamicProperty("prisonLocation"); // matches PRISON_LOCATION_PROPERTY
-        if (isImprisoned) {
-            sender.sendMessage(`§o§c[Paradox] You cannot use the tpr command while imprisoned!`);
-            return;
-        }
-
         /**
          * Function to accept a teleport request.
          * @param {Player} receiver - The player receiving the teleport request.
@@ -121,23 +115,40 @@ export const tprCommand: Command = {
                 const sender = request.sender;
                 const receiverName = receiver.name;
 
-                // Check if sender is still valid before teleporting
-                if (sender && sender.isValid) {
-                    const receiverTransform = PlayerLocationCache.getTransform(receiver);
-                    const location = receiverTransform?.location ?? receiver.location;
-                    const dimension = receiverTransform?.dimension ?? receiver.dimension;
-
-                    sender.teleport(location, { dimension });
-                    sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request accepted. Teleporting to ${receiverName}§7.`);
-                    receiver.sendMessage(`§2[§7Paradox§2]§o§7 You accepted the teleport request from ${sender.name}§7.`);
-                } else {
-                    receiver.sendMessage(`§o§c[Paradox] The sender is no longer online.`);
+                // 1. Check if receiver is currently restricted
+                const receiverRestriction = restrictionManager.checkRestriction(receiver, "tpr", "Utility");
+                if (receiverRestriction) {
+                    receiver.sendMessage(receiverRestriction);
+                    return;
                 }
+
+                // 2. Check if sender is still valid before teleporting
+                if (!sender || !sender.isValid) {
+                    receiver.sendMessage(`§o§c[Paradox] The sender is no longer online.`);
+                    cancelTeleportRequest(receiver.id);
+                    return;
+                }
+
+                // 3. Check if sender has become restricted since sending request
+                const senderRestriction = restrictionManager.checkRestriction(sender, "tpr", "Utility");
+                if (senderRestriction) {
+                    receiver.sendMessage(`§o§c[Paradox] Cannot complete teleport: ${sender.name} is currently restricted.`);
+                    sender.sendMessage(senderRestriction);
+                    cancelTeleportRequest(receiver.id);
+                    return;
+                }
+
+                const receiverTransform = PlayerLocationCache.getTransform(receiver);
+                const location = receiverTransform?.location ?? receiver.location;
+                const dimension = receiverTransform?.dimension ?? receiver.dimension;
+
+                sender.teleport(location, { dimension });
+                sender.sendMessage(`§2[§7Paradox§2]§o§7 Teleport request accepted. Teleporting to ${receiverName}§7.`);
+                receiver.sendMessage(`§2[§7Paradox§2]§o§7 You accepted the teleport request from ${sender.name}§7.`);
 
                 cancelTeleportRequest(receiver.id);
             } else {
                 receiver.sendMessage(`§2[§7Paradox§2]§o§7 You have no pending teleport requests.`);
-                return;
             }
         }
 
@@ -175,6 +186,13 @@ export const tprCommand: Command = {
             }
         }
 
+        // Check if sender is restricted before allowing sending
+        const senderRestriction = restrictionManager.checkRestriction(sender, "tpr", "Utility");
+        if (senderRestriction) {
+            sender.sendMessage(senderRestriction);
+            return;
+        }
+
         // Handle sending a teleport request
         const receiverName = args.join(" ").trim().replace(/["@]/g, "");
         const receiver = PlayerCache.getPlayerByName(receiverName);
@@ -187,6 +205,13 @@ export const tprCommand: Command = {
         // Prevent self-request
         if (sender.id === receiver.id) {
             sender.sendMessage("§o§c[Paradox] You cannot send a teleport request to yourself.");
+            return;
+        }
+
+        // Check if target receiver is restricted from receiving TPR
+        const receiverRestriction = restrictionManager.checkRestriction(receiver, "tpr", "Utility");
+        if (receiverRestriction) {
+            sender.sendMessage(`§o§c[Paradox] Player '${receiver.name}' cannot receive teleport requests right now.`);
             return;
         }
 

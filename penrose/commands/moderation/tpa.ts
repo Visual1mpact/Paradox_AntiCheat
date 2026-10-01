@@ -217,12 +217,6 @@ export const tpaCommand: Command = {
     execute: (message?: ChatSendBeforeEvent, args: string[] = []): void => {
         if (!message) return;
 
-        const isImprisoned = message.sender.getDynamicProperty("prisonLocation");
-        if (isImprisoned) {
-            message.sender.sendMessage("§o§c[Paradox] You cannot use the tpa command while imprisoned!");
-            return;
-        }
-
         const cleanedArgs = args.map(cleanName);
 
         const coordTarget = parseCoordinates(cleanedArgs);

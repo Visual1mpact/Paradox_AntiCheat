@@ -305,7 +305,6 @@ const allCommands: Command[] = [
     flyCheckCommand,
     afkCommand,
     antispamCommand,
-    pvpToggleCommand,
     channelCommand,
     hitReachCheckCommand,
     autoClickerCommand,

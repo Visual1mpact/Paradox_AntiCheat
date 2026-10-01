@@ -3,6 +3,7 @@ import { Player, ChatSendBeforeEvent, system, world, PlayerSpawnAfterEvent } fro
 import * as CryptoES from "../../node_modules/crypto-es";
 import { ActionFormButton, GUIInstructions } from "../../types/gui-schema";
 import { GUIManager } from "../../commands/gui/form-generator";
+import { restrictionManager } from "./restriction-manager";
 
 /**
  * Security clearance levels for commands.
@@ -345,6 +346,15 @@ export class CommandHandler {
             return false;
         }
 
+        // --- NEW RESTRICTION CHECK ---
+        if (command) {
+            const restrictionMessage = restrictionManager.checkRestriction(player, command.name, command.category);
+            if (restrictionMessage) {
+                player.sendMessage(restrictionMessage);
+                return false;
+            }
+        }
+
         if (command && !this.checkCommandPermission(command, args[0]?.toLowerCase(), playerClearance)) {
             player.sendMessage("§2[§7Paradox§2]§o§7 Insufficient clearance to execute this command.");
             return false;
@@ -399,7 +409,14 @@ export class CommandHandler {
         const playerClearance = this.getPlayerClearance(player);
 
         this.commandsByCategory.forEach((commands, category) => {
-            const filtered = commands.filter((c) => c.securityClearance <= playerClearance);
+            // Filter by clearance AND active restrictions
+            const filtered = commands.filter((c) => {
+                if (c.securityClearance > playerClearance) return false;
+                // Hide command if restricted
+                const restriction = restrictionManager.checkRestriction(player, c.name, c.category);
+                return restriction === null;
+            });
+
             if (!filtered.length) return;
 
             message += `\n§2[§7${category}§2]§r\n`;

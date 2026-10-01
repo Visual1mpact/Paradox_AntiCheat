@@ -581,11 +581,6 @@ export const homeCommand: Command = {
             return;
         }
 
-        if (player.getDynamicProperty("prisonLocation")) {
-            player.sendMessage(`§o§c[Paradox] You cannot use the home command while imprisoned!`);
-            return;
-        }
-
         const playerMaxHomes = await getMaxHomesForPlayer(player.id);
         const obfuscatedKey = cryptoES.SHA256(player.id).toString();
 
