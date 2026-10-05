@@ -1,35 +1,88 @@
 import { Player, PlayerSpawnAfterEvent, system, Vector3, world } from "@minecraft/server";
 import { allowlistDB, banlistDB, paradoxModulesDB, whitelistDB, warnsDB, playerMetadataDB } from "../event-listeners/world-initialize";
 import { buildPrison, freezePlayer, PRISON_LOCATION_PROPERTY } from "../commands/moderation/freeze";
-import { ListPlayerRecord, PlatformBlockSettings, WarningEntry } from "../types/db-types";
+import {
+    AllowlistPlayersSchema,
+    BanlistPlayersSchema,
+    ListPlayerDictionary,
+    ListPlayerRecord,
+    PlatformBlockSettings,
+    PlayerWarnData,
+} from "../types/db-types";
 import { EventCoordinator } from "../classes/core/event-coordinator";
-import { PlayerLocationCache } from "../classes/cache/player-location-cache";
 
-// Define a type for player information
+// Mapping key types to database store shapes
+interface CacheSchemaMap {
+    whitelist: ListPlayerDictionary;
+    banlist: BanlistPlayersSchema["players"];
+    allowlist: AllowlistPlayersSchema["players"];
+    warns: PlayerWarnData;
+}
+
+// Strongly typed in-memory cache store based on db-types schemas
+interface DBCacheStore {
+    whitelist: ListPlayerDictionary | null;
+    banlist: BanlistPlayersSchema["players"] | null;
+    allowlist: AllowlistPlayersSchema["players"] | null;
+    warns: PlayerWarnData | null;
+    lastFetch: number;
+}
+
+const dbCache: DBCacheStore = {
+    whitelist: null,
+    banlist: null,
+    allowlist: null,
+    warns: null,
+    lastFetch: 0,
+};
+
+// Cache TTL in milliseconds (5 seconds) to balance low-latency reads with database sync
+const CACHE_TTL = 5000;
+
 interface PlayerInfo {
     name: string;
     id: string;
 }
 
-// Define a type for security clearance data
 interface SecurityClearanceData {
     host?: PlayerInfo;
     securityClearanceList: PlayerInfo[];
 }
 
 /**
+ * Helper to get cached database records or fetch them if cache is stale/empty.
+ * Uses strict generic constraints to align with OptimizedDatabase key requirements.
+ */
+async function getCachedDB<
+    K extends keyof CacheSchemaMap,
+    DBKey extends string,
+    DBInstance extends { get: (k: DBKey) => Promise<CacheSchemaMap[K] | undefined> }
+>(
+    key: K,
+    dbInstance: DBInstance,
+    dbKey: DBKey
+): Promise<CacheSchemaMap[K]> {
+    const now = Date.now();
+    if (!dbCache[key] || now - dbCache.lastFetch > CACHE_TTL) {
+        const fetched = (await dbInstance.get(dbKey)) ?? ({} as CacheSchemaMap[K]);
+        dbCache[key] = fetched as DBCacheStore[K] & CacheSchemaMap[K];
+        dbCache.lastFetch = now;
+    }
+    return dbCache[key] as CacheSchemaMap[K];
+}
+
+/**
  * Function to execute when a player spawns.
  * Initializes event handlers for player spawn events.
  */
-export function onPlayerSpawn() {
+export function onPlayerSpawn(): void {
     initializeEventHandlers();
 }
 
 /**
  * Function to initialize event handlers for player spawn events.
- * Subscribes to the player spawn event to handle additional logic.
  */
-function initializeEventHandlers() {
+function initializeEventHandlers(): void {
     EventCoordinator.subscribeAfter("playerSpawn", handlePlayerSpawn);
 }
 
@@ -86,7 +139,7 @@ function computeTargetNameTag(player: Player): string {
 }
 
 /**
- * Updates the player's name tag and forces a location sync if changed.
+ * Updates the player's name tag without forcing an unnecessary teleport packet.
  *
  * @param {Player} player - The target player.
  */
@@ -96,10 +149,6 @@ function updatePlayerNameTag(player: Player): void {
     if (player.nameTag !== targetTag) {
         system.run(() => {
             player.nameTag = targetTag;
-            const transform = PlayerLocationCache.getTransform(player);
-            const loc = transform?.location ?? player.location;
-            const dim = transform?.dimension ?? player.dimension;
-            player.teleport(loc, { dimension: dim }); // force client sync
         });
     }
 }
@@ -132,37 +181,15 @@ function handlePrisonEnforcement(player: Player): void {
     const prisonLocation = player.getDynamicProperty(PRISON_LOCATION_PROPERTY) as Vector3 | undefined;
     if (!prisonLocation) return;
 
-    const transform = PlayerLocationCache.getTransform(player);
-    const loc = transform?.location ?? player.location;
+    const loc = player.location;
 
     if (isOutsidePrisonBounds(loc, prisonLocation)) {
-        buildPrison(player); // rebuild walls if needed
-        freezePlayer(player); // freeze again
-        player.sendMessage(`§2[§7Paradox§2]§o§7 You were returned to your prison after respawn.`);
+        system.run(() => {
+            buildPrison(player);
+            freezePlayer(player);
+            player.sendMessage(`§2[§7Paradox§2]§o§7 You were returned to your prison after respawn.`);
+        });
     }
-}
-
-/**
- * Handles player spawn events.
- * This function is triggered when a player spawns in the world.
- * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
- * @returns {Promise<void>}
- */
-async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
-    const player = event.player;
-
-    if (event.initialSpawn) {
-        await checkMemoryAndRenderDistance(event);
-        isPlatformBlocked(event);
-        await handleBanCheck(event);
-        await handleWarnCheck(event);
-        handleSecurityClearance(event);
-        await allowList(event);
-        await handleMetadataUpdate(player);
-        updatePlayerNameTag(player);
-    }
-
-    handlePrisonEnforcement(player);
 }
 
 /**
@@ -173,20 +200,19 @@ async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
  * @returns {Promise<boolean>} True if the player is authenticated against the whitelist.
  */
 async function isWhitelisted(playerName: string, playerId: string): Promise<boolean> {
-    const whitelistedPlayers = (await whitelistDB.get("players")) ?? {};
+    const whitelistedPlayers = await getCachedDB("whitelist", whitelistDB, "players");
     const record = whitelistedPlayers[playerName];
 
     if (!record) return false;
 
-    const legacyRecord = record as ListPlayerRecord & { ID?: string };
+    const legacyRecord = record as ListPlayerRecord & { ID?: string | null };
     const targetId = record.id ?? legacyRecord.ID;
 
-    // If added offline (id is null) or legacy format detected, populate/update ID
     if (!targetId || "ID" in legacyRecord) {
         if ("ID" in legacyRecord) delete legacyRecord.ID;
         record.id = playerId;
         await whitelistDB.set("players", whitelistedPlayers);
-        return true;
+        dbCache.whitelist = whitelistedPlayers;
     }
 
     return targetId === playerId;
@@ -194,17 +220,13 @@ async function isWhitelisted(playerName: string, playerId: string): Promise<bool
 
 /**
  * Checks the player's memoryTier and maxRenderDistance.
- * If the device is suspicious or non-compliant, the player will be banned and kicked.
- * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ *
+ * @param {Player} player - The target player entity.
  * @returns {Promise<void>}
  */
-async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promise<void> {
-    const player = event.player;
+async function checkMemoryAndRenderDistance(player: Player): Promise<void> {
     const playerName = player.name;
 
-    const bannedPlayers = (await banlistDB.get("players")) ?? {};
-
-    // Whitelisted players are exempt
     if (await isWhitelisted(playerName, player.id)) {
         player.sendMessage("§2[§7Paradox§2]§o§7 You are exempt from local bans due to being whitelisted.");
         return;
@@ -213,10 +235,11 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
     const { maxRenderDistance, platformType, memoryTier } = player.clientSystemInfo;
 
     const invalidRenderDistance = maxRenderDistance == null || Number.isNaN(maxRenderDistance) || maxRenderDistance < 6 || maxRenderDistance > 96;
-
     const invalidMemory = (platformType === "Desktop" && memoryTier === 0) || (platformType === "Console" && memoryTier <= 1);
 
     if (invalidRenderDistance || invalidMemory) {
+        const bannedPlayers = await getCachedDB("banlist", banlistDB, "players");
+
         if (!bannedPlayers[playerName]) {
             bannedPlayers[playerName] = {
                 reason: "Invalid device specifications (render distance)",
@@ -225,6 +248,7 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
             };
 
             await banlistDB.set("players", bannedPlayers);
+            dbCache.banlist = bannedPlayers;
         }
 
         player.runCommand(`kick @s Your device does not meet the minimum requirements to join this world. You have been banned.`);
@@ -233,77 +257,61 @@ async function checkMemoryAndRenderDistance(event: PlayerSpawnAfterEvent): Promi
 
 /**
  * Checks an allowlist similar to the native implementation in BDS.
- * If the connecting player is not on the list or ID authentication fails, they are disconnected.
  *
- * @param {PlayerSpawnAfterEvent} event - The event object containing player spawn information.
- * @returns {Promise<void>} Resolves when access check completes.
+ * @param {Player} player - The target player entity.
+ * @returns {Promise<void>}
  */
-async function allowList(event: PlayerSpawnAfterEvent): Promise<void> {
-    const player = event.player;
+async function allowList(player: Player): Promise<void> {
     const playerName = player.name;
-    const allowListedPlayers = (await allowlistDB.get("players")) ?? {};
+    const allowListedPlayers = await getCachedDB("allowlist", allowlistDB, "players");
 
-    // If no allowlist is enforced, allow access
     if (Object.keys(allowListedPlayers).length === 0) return;
 
-    // Retrieve host configuration data
     const opsecData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
 
-    // Always grant access to the host
     if (opsecData.host?.id === player.id) {
         player.sendMessage(`§2[§7Paradox§2]§o§7 Host privilege authenticated. Welcome, ${playerName}.`);
         return;
     }
 
-    // Lookup entry by player name
     const record = allowListedPlayers[playerName];
 
     if (record) {
-        const legacyRecord = record as ListPlayerRecord & { ID?: string };
+        const legacyRecord = record as ListPlayerRecord & { ID?: string | null };
         const targetId = record.id ?? legacyRecord.ID;
 
-        // If missing ID (added offline) or matching online ID, authenticate and update ID
         if (!targetId || targetId === player.id) {
             if ("ID" in legacyRecord) delete legacyRecord.ID;
             record.id = player.id;
             await allowlistDB.set("players", allowListedPlayers);
+            dbCache.allowlist = allowListedPlayers;
 
             player.sendMessage(`§2[§7Paradox§2]§o§7 Access granted. Welcome back, ${playerName}.`);
             return;
         }
     }
 
-    // Disconnect unauthorized player
     player.runCommand(`kick @s Access denied: You are not on the allowlist.`);
 }
 
-/**
- * List of all recognized platform keys used in PlatformBlockSettings.
- */
 const validPlatforms = ["console", "desktop", "mobile"] as const;
 type ValidPlatform = (typeof validPlatforms)[number];
 
-/**
- * Type guard to check if a string is a valid platform key.
- */
 function isValidPlatform(key: string): key is ValidPlatform {
     return validPlatforms.includes(key as ValidPlatform);
 }
 
 /**
  * Kicks players whose platform is blocked in configured module settings.
- * @param {PlayerSpawnAfterEvent} event - The event containing player spawn info.
+ *
+ * @param {Player} player - The target player entity.
  */
-async function isPlatformBlocked(event: PlayerSpawnAfterEvent): Promise<void> {
-    const player = event.player;
-
-    // Ensure spoof tracking property exists
+async function isPlatformBlocked(player: Player): Promise<void> {
     if (!player.getDynamicProperty("PlayerName")) {
         player.setDynamicProperty("PlayerName", player.name);
     }
 
     const platformModule = await paradoxModulesDB.get("platformBlock_b");
-
     if (!platformModule?.enabled) return;
 
     const settings: PlatformBlockSettings = platformModule.settings ?? {
@@ -314,7 +322,6 @@ async function isPlatformBlocked(event: PlayerSpawnAfterEvent): Promise<void> {
 
     const platform = player.clientSystemInfo.platformType?.toLowerCase();
 
-    // Use type guard to safely index into settings
     if (platform && isValidPlatform(platform) && settings[platform]) {
         player.runCommand(`kick @s This platform is not authorized!`);
     }
@@ -322,37 +329,32 @@ async function isPlatformBlocked(event: PlayerSpawnAfterEvent): Promise<void> {
 
 /**
  * Checks if a player is banned during their spawn event.
- * If the player is the host or whitelisted, they are removed from the ban list.
- * Otherwise, banned players are kicked.
- * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ *
+ * @param {Player} player - The target player entity.
  * @returns {Promise<void>}
  */
-async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
-    const player = event.player;
+async function handleBanCheck(player: Player): Promise<void> {
     const playerName = player.name;
-
-    const bannedPlayers = (await banlistDB.get("players")) ?? {};
+    const bannedPlayers = await getCachedDB("banlist", banlistDB, "players");
     const opsecData: SecurityClearanceData = JSON.parse(((await world.getDynamicProperty("paradoxOPSEC")) as string) ?? "{}");
 
-    // Always allow the host in, remove them from banlist if needed
     if (opsecData.host?.id === player.id) {
         if (playerName in bannedPlayers) {
             delete bannedPlayers[playerName];
             await banlistDB.set("players", bannedPlayers);
+            dbCache.banlist = bannedPlayers;
             player.sendMessage("§2[§7Paradox§2]§o§7 You are the host and cannot be banned.");
         }
         return;
     }
 
-    // If the player is banned
     if (playerName in bannedPlayers) {
-        // If also whitelisted with matching ID, unban them
         if (await isWhitelisted(playerName, player.id)) {
             delete bannedPlayers[playerName];
             await banlistDB.set("players", bannedPlayers);
+            dbCache.banlist = bannedPlayers;
             player.sendMessage("§2[§7Paradox§2]§o§7 You have been removed from the ban list due to being whitelisted.");
         } else {
-            // Otherwise, kick the player
             player.runCommand(`kick @s You are banned. Please contact an admin for more information.`);
         }
     }
@@ -360,19 +362,16 @@ async function handleBanCheck(event: PlayerSpawnAfterEvent): Promise<void> {
 
 /**
  * Checks if a player has reached the warning threshold and kicks them if they have.
- * This enforces the 3-warning limit upon rejoining, effectively suspending the player.
- * @param {PlayerSpawnAfterEvent} event - The event object.
+ *
+ * @param {Player} player - The target player entity.
  */
-async function handleWarnCheck(event: PlayerSpawnAfterEvent): Promise<void> {
-    const player = event.player;
+async function handleWarnCheck(player: Player): Promise<void> {
     const playerName = player.name;
-
-    // Level 4 administrators are exempt from automated warning kicks
     const clearance = player.getDynamicProperty("securityClearance") as number;
     if (clearance === 4) return;
 
-    const allWarns = (await warnsDB.get("players")) ?? {};
-    const playerWarns: WarningEntry[] = allWarns[playerName] ?? [];
+    const allWarns = await getCachedDB("warns", warnsDB, "players");
+    const playerWarns = allWarns[playerName] ?? [];
 
     if (playerWarns.length >= 3) {
         player.runCommand(`kick @s Automatic Kick: Too many warnings (${playerWarns.length}/3). Appeal to an admin.`);
@@ -381,31 +380,26 @@ async function handleWarnCheck(event: PlayerSpawnAfterEvent): Promise<void> {
 
 /**
  * Handles security clearance during player spawn.
- * Ensures the player's security clearance is set correctly and updated as needed.
- * @param {PlayerSpawnAfterEvent} event - The event object containing information about player spawn.
+ *
+ * @param {Player} player - The target player entity.
  */
-function handleSecurityClearance(event: PlayerSpawnAfterEvent) {
-    const player = event.player;
+function handleSecurityClearance(player: Player): void {
     const DEFAULT_CLEARANCE = 1;
     const MAX_CLEARANCE = 4;
 
     let playerClearance = player.getDynamicProperty("securityClearance") as number | undefined;
 
-    // If clearance is missing or out of bounds, default to Level 1
     if (playerClearance === undefined || playerClearance < DEFAULT_CLEARANCE || playerClearance > MAX_CLEARANCE) {
         player.setDynamicProperty("securityClearance", DEFAULT_CLEARANCE);
         playerClearance = DEFAULT_CLEARANCE;
     }
 
-    // Safely parse security clearance data from dynamic properties
     const securityClearanceData: SecurityClearanceData = JSON.parse((world.getDynamicProperty("paradoxOPSEC") as string) ?? "{}");
 
-    // Skip if the player is the host
     if (securityClearanceData.host?.id === player.id) {
         return;
     }
 
-    // Handle max security clearance logic
     if (playerClearance === MAX_CLEARANCE) {
         const isInSecurityList = securityClearanceData.securityClearanceList.some((info) => info.id === player.id);
 
@@ -413,4 +407,29 @@ function handleSecurityClearance(event: PlayerSpawnAfterEvent) {
             player.setDynamicProperty("securityClearance", DEFAULT_CLEARANCE);
         }
     }
+}
+
+/**
+ * Optimized player spawn handler utilizing Promise.all() to prevent tick slowdowns.
+ *
+ * @param {PlayerSpawnAfterEvent} event - The player spawn event payload.
+ */
+async function handlePlayerSpawn(event: PlayerSpawnAfterEvent): Promise<void> {
+    const player = event.player;
+
+    if (event.initialSpawn) {
+        isPlatformBlocked(player);
+        handleSecurityClearance(player);
+        updatePlayerNameTag(player);
+
+        await Promise.all([
+            checkMemoryAndRenderDistance(player),
+            handleBanCheck(player),
+            handleWarnCheck(player),
+            allowList(player),
+            handleMetadataUpdate(player),
+        ]);
+    }
+
+    handlePrisonEnforcement(player);
 }
