@@ -186,6 +186,10 @@ export class LandClaimManager {
      */
     public static get config() {
         return {
+            /** Indicates whether new land claims are currently enabled globally (default: false) */
+            get CLAIMS_ENABLED(): boolean {
+                return (world.getDynamicProperty("claim_enabled") as boolean) ?? false;
+            },
             /** Minimum horizontal edge length in blocks */
             get MIN_SIZE(): number {
                 return (world.getDynamicProperty("claim_min_size") as number) ?? 10;
@@ -209,6 +213,9 @@ export class LandClaimManager {
         };
     }
 
+    // Array holding active unsubscribe cleanup callbacks for event handlers
+    private eventSubscriptions: Array<() => void> = [];
+
     // Fast spatial index: DimensionId -> ChunkKey -> Set of Claim IDs
     private chunkMap = new Map<string, Map<string, Set<string>>>();
 
@@ -231,7 +238,12 @@ export class LandClaimManager {
 
     private constructor() {
         PlayerLocationCache.init();
-        this.registerEventHandlers();
+
+        // Permanent player cleanup handler when leaving the game
+        EventCoordinator.unsubscribeAfter("playerLeave", (ev) => {
+            this.playerSelections.delete(ev.playerId);
+            this.stopTrackingPlayer(ev.playerId);
+        });
     }
 
     /**
@@ -247,10 +259,37 @@ export class LandClaimManager {
     }
 
     /**
-     * Loads saved claims from persistent storage into memory and builds the spatial chunk index.
+     * Synchronizes global claim toggle dynamic property and updates event subscriptions.
+     *
+     * @param enabled - Enable or disable land claims.
+     */
+    public setClaimsEnabled(enabled: boolean): void {
+        world.setDynamicProperty("claim_enabled", enabled);
+        this.updateEventSubscriptionState();
+    }
+
+    /**
+     * Evaluates current dynamic property state and attaches/detaches event listeners dynamically.
+     */
+    public updateEventSubscriptionState(): void {
+        const isEnabled = LandClaimManager.config.CLAIMS_ENABLED;
+
+        if (isEnabled) {
+            this.registerEventHandlers();
+        } else {
+            this.unregisterEventHandlers();
+        }
+    }
+
+    /**
+     * Loads saved claims from persistent storage into memory, builds the spatial chunk index,
+     * and sets up initial event subscriptions once the world is loaded.
      */
     public async init(): Promise<void> {
         try {
+            // Safe to call dynamic properties now that world is initialized
+            this.updateEventSubscriptionState();
+
             const entries = await landClaimsDB.entries();
             for (const [_, claim] of entries) {
                 if (!claim.color) {
@@ -501,6 +540,11 @@ export class LandClaimManager {
      * @returns `true` if creation succeeded; otherwise `false`.
      */
     public async createClaim(player: Player, p1: Vector3D, p2: Vector3D): Promise<boolean> {
+        // Quietly fail if land claiming is disabled globally
+        if (!LandClaimManager.config.CLAIMS_ENABLED) {
+            return false;
+        }
+
         const lockKey = player.id;
         if (this.pendingClaimLocks.has(lockKey)) {
             player.sendMessage("§o§c[Paradox] Processing previous claim creation request...");
@@ -643,12 +687,7 @@ export class LandClaimManager {
      * @returns `true` if player is owner or member; otherwise `false`.
      */
     public isAuthorized(player: Player, claim: ClaimData): boolean {
-        return (
-            claim.ownerUuid === player.id ||
-            claim.ownerName === player.name || // Fallback check for owner name
-            claim.members.includes(player.id) ||
-            claim.members.includes(player.name)
-        );
+        return claim.ownerUuid === player.id || claim.ownerName === player.name || claim.members.includes(player.id) || claim.members.includes(player.name);
     }
 
     /**
@@ -735,20 +774,17 @@ export class LandClaimManager {
     }
 
     // ==========================================
-    // EVENT LISTENERS & PROTECTION LOGIC
+    // DYNAMIC EVENT SUBSCRIPTION LOGIC
     // ==========================================
 
     /**
-     * Subscribes script handlers to world events for interdiction and claim protection.
+     * Subscribes land claim protection event handlers if they are not already subscribed.
      */
     private registerEventHandlers(): void {
-        EventCoordinator.unsubscribeAfter("playerLeave", (ev) => {
-            this.playerSelections.delete(ev.playerId);
-            this.stopTrackingPlayer(ev.playerId);
-        });
+        if (this.eventSubscriptions.length > 0) return;
 
         // 1. Entity Damage Intercept
-        EventCoordinator.subscribeBefore("entityHurt", (ev) => {
+        const unsubHurt = EventCoordinator.subscribeBefore("entityHurt", (ev) => {
             const { hurtEntity, damageSource } = ev;
 
             const claim = this.getClaimAt(hurtEntity.location, hurtEntity.dimension.id);
@@ -756,36 +792,29 @@ export class LandClaimManager {
 
             const attacker = damageSource.damagingEntity;
 
-            // Scenario A: Player is attacking an entity inside a claim
             if (attacker instanceof Player) {
-                // Deny damage ONLY if the attacking player is NOT authorized on this claim
                 if (!this.isAuthorized(attacker, claim)) {
                     ev.cancel = true;
                     attacker.sendMessage("§o§c[Paradox] You cannot cause damage inside this protected claim.");
                     system.run(() => this.enforceGamemodeSafeguard(attacker, claim));
                 }
-                // Authorized owners/members bypass this check and can freely hurt mobs/animals on their land.
                 return;
             }
 
-            // Scenario B: Mobs/Entities attacking a player on claimed land
             if (hurtEntity instanceof Player && this.isAuthorized(hurtEntity, claim)) {
-                // Cancel damage dealt to authorized claim members by external mobs/entities
                 ev.cancel = true;
                 return;
             }
 
-            // Scenario C: Explosions harming entities/mobs/players inside claims
             if (damageSource.cause === EntityDamageCause.blockExplosion || damageSource.cause === EntityDamageCause.entityExplosion) {
                 ev.cancel = true;
             }
         });
 
         // 2. Wand Interaction, Block Right-Click & Bucket Liquid Interception
-        EventCoordinator.subscribeBefore("playerInteractWithBlock", (ev) => {
+        const unsubInteract = EventCoordinator.subscribeBefore("playerInteractWithBlock", (ev) => {
             const { player, block, itemStack, blockFace } = ev;
 
-            // Handle Selection Wand Clicks
             if (itemStack?.typeId === LandClaimManager.WAND_ITEM_ID) {
                 ev.cancel = true;
                 system.run(() => this.handleWandClick(player, block.location));
@@ -796,7 +825,6 @@ export class LandClaimManager {
             const dimensionId = transform?.dimension.id ?? player.dimension.id;
             const currentClaim = this.getClaimAt(block.location, dimensionId);
 
-            // Intercept Liquid Bucket Placement (Lava, Water, Powder Snow)
             const liquidBuckets = ["minecraft:lava_bucket", "minecraft:water_bucket", "minecraft:powder_snow_bucket"];
             if (itemStack && liquidBuckets.includes(itemStack.typeId)) {
                 const pushOffset = this.getDirectionOffset(blockFace);
@@ -808,7 +836,6 @@ export class LandClaimManager {
 
                 const targetClaim = this.getClaimAt(targetPos, dimensionId);
 
-                // Cancel if trying to empty bucket into or targeted directly at an unauthorized claim
                 if (targetClaim && !this.isAuthorized(player, targetClaim)) {
                     ev.cancel = true;
                     player.sendMessage("§o§c[Paradox] You cannot place liquids inside a protected land claim.");
@@ -817,7 +844,6 @@ export class LandClaimManager {
                 }
             }
 
-            // Handle General Protected Claim Interactivity
             if (currentClaim && !this.isAuthorized(player, currentClaim)) {
                 ev.cancel = true;
                 player.sendMessage("§o§c[Paradox] You don't have permission to interact here.");
@@ -826,7 +852,7 @@ export class LandClaimManager {
         });
 
         // 3. Block Placement, Piston, & Redstone Safeguards
-        EventCoordinator.subscribeBefore("playerPlaceBlock", (ev) => {
+        const unsubPlace = EventCoordinator.subscribeBefore("playerPlaceBlock", (ev) => {
             const { player, block, face } = ev;
             const transform = PlayerLocationCache.getTransform(player);
             const dimId = transform?.dimension.id ?? player.dimension.id;
@@ -843,7 +869,6 @@ export class LandClaimManager {
             const itemTypeId = ev.permutationToPlace.type.id;
             if (!itemTypeId) return;
 
-            // Piston push protection targeting unauthorized claims
             if (itemTypeId === "minecraft:piston" || itemTypeId === "minecraft:sticky_piston") {
                 const pushOffset = this.getDirectionOffset(face);
                 const projectedTarget: Vector3D = {
@@ -861,7 +886,6 @@ export class LandClaimManager {
                 }
             }
 
-            // Sticky block protection adjacent to unauthorized claims
             if (itemTypeId === "minecraft:slime" || itemTypeId === "minecraft:honey_block") {
                 const adjacentDirections = [Direction.North, Direction.South, Direction.East, Direction.West, Direction.Up, Direction.Down];
 
@@ -885,7 +909,7 @@ export class LandClaimManager {
         });
 
         // 4. Block Break Protection
-        EventCoordinator.subscribeBefore("playerBreakBlock", (ev) => {
+        const unsubBreak = EventCoordinator.subscribeBefore("playerBreakBlock", (ev) => {
             const transform = PlayerLocationCache.getTransform(ev.player);
             const dimId = transform?.dimension.id ?? ev.player.dimension.id;
             const claim = this.getClaimAt(ev.block.location, dimId);
@@ -897,13 +921,30 @@ export class LandClaimManager {
         });
 
         // 5. Explosion Interception
-        EventCoordinator.subscribeBefore("explosion", (ev) => {
+        const unsubExplosion = EventCoordinator.subscribeBefore("explosion", (ev) => {
             const dimId = ev.dimension.id;
             const safeBlocks = ev.getImpactedBlocks().filter((block) => {
                 return this.getClaimAt(block.location, dimId) === undefined;
             });
             ev.setImpactedBlocks(safeBlocks);
         });
+
+        // Save all unsubscribe callbacks
+        this.eventSubscriptions = [unsubHurt, unsubInteract, unsubPlace, unsubBreak, unsubExplosion];
+    }
+
+    /**
+     * Unsubscribes and cleans up all active protection event handlers.
+     */
+    private unregisterEventHandlers(): void {
+        for (const unsubscribe of this.eventSubscriptions) {
+            try {
+                unsubscribe();
+            } catch (err) {
+                // Ignore cleanup errors
+            }
+        }
+        this.eventSubscriptions = [];
     }
 
     // ==========================================
@@ -917,6 +958,10 @@ export class LandClaimManager {
      * @param loc - Block location clicked.
      */
     private handleWandClick(player: Player, loc: Vector3D): void {
+        if (!LandClaimManager.config.CLAIMS_ENABLED) {
+            return;
+        }
+
         const now = Date.now();
         let sel = this.playerSelections.get(player.id);
         const transform = PlayerLocationCache.getTransform(player);
@@ -952,6 +997,7 @@ export const landClaims = LandClaimManager.getInstance();
 function handleConfigCommand(sender: Player, args: string[]): void {
     const param = args[1]?.toLowerCase();
     const valStr = args[2];
+    const manager = LandClaimManager.getInstance();
 
     if (param === "reset") {
         world.setDynamicProperty("claim_min_size", undefined);
@@ -959,11 +1005,28 @@ function handleConfigCommand(sender: Player, args: string[]): void {
         world.setDynamicProperty("claim_max_area", undefined);
         world.setDynamicProperty("claim_max_claims_per_player", undefined);
         world.setDynamicProperty("claim_buffer", undefined);
+
+        // Reset state to disabled and unsubscribe event handlers
+        manager.setClaimsEnabled(false);
+
         sender.sendMessage("§2[§7Paradox§2]§o§7 All land claim configuration parameters have been reset to default values.");
         return;
     }
 
-    if (!param || !valStr) {
+    if (!param) {
+        sender.sendMessage("§o§c[Paradox] Usage: {prefix}landclaim config <enable|disable|min_size|max_size|max_area|max_claims|buffer|reset> [value]");
+        return;
+    }
+
+    // Toggle land claiming on or off and update event subscriptions dynamically
+    if (param === "enable" || param === "disable" || param === "enabled") {
+        const enableState = param === "enable" || (param === "enabled" && valStr?.toLowerCase() === "true");
+        manager.setClaimsEnabled(enableState);
+        sender.sendMessage(`§2[§7Paradox§2]§o§7 Land claims are now ${enableState ? "§aENABLED" : "§cDISABLED"}§7.`);
+        return;
+    }
+
+    if (!valStr) {
         sender.sendMessage("§o§c[Paradox] Usage: {prefix}landclaim config <min_size|max_size|max_area|max_claims|buffer|reset> <value>");
         return;
     }
@@ -992,7 +1055,7 @@ function handleConfigCommand(sender: Player, args: string[]): void {
         world.setDynamicProperty(target.property, newValue);
         sender.sendMessage(`§2[§7Paradox§2]§o§7 Updated ${target.label} to §a${newValue}§7.`);
     } else {
-        sender.sendMessage("§o§c[Paradox] Invalid config key. Valid keys: min_size, max_size, max_area, max_claims, buffer, reset");
+        sender.sendMessage("§o§c[Paradox] Invalid config key. Valid keys: enable, disable, min_size, max_size, max_area, max_claims, buffer, reset");
     }
 }
 
@@ -1175,37 +1238,19 @@ export const claimCommand: Command = {
     name: "landclaim",
     description: "Manage, inspect, and configure access or limits for registered land claims.",
     usage: "{prefix}landclaim <delete|list|online|info|trust|untrust|config> [targetPlayer|claimId] [value]",
-    /**
-     * Command usage examples demonstrating player operations and administrative commands.
-     * Supports placeholder replacement for dynamic system prefixes.
-     */
     examples: [
-        // --- Member & Permission Management ---
-        /** Grant full interaction/build rights to a target player via Claim ID */
         `{prefix}landclaim trust claim_1700000000000_1234 Steve`,
-        /** Revoke interaction/build rights from a target player via Claim ID */
         `{prefix}landclaim untrust claim_1700000000000_1234 Steve`,
-
-        // --- Claim Lifecycle & Inspection Commands ---
-        /** Permanently delete a claim and unregister its physical boundaries */
         `{prefix}landclaim delete claim_1700000000000_1234`,
-        /** Display an itemized list of your registered claims with coordinates */
         `{prefix}landclaim list`,
-        /** Inspect registered claims for a specific online or target player */
         `{prefix}landclaim list Steve`,
-        /** View claims owned by all currently connected online players (Admin only) */
         `{prefix}landclaim online`,
-        /** Inspect metadata, owner, and trusted members of the claim at your current position */
         `{prefix}landclaim info`,
-
-        // --- Administrative & Runtime Configuration ---
-        /** Set maximum allowable claims per player (Admin only) */
+        `{prefix}landclaim config enable`,
+        `{prefix}landclaim config disable`,
         `{prefix}landclaim config max_claims 5`,
-        /** Set minimum allowable claim size in blocks (e.g., 10x10) (Admin only) */
         `{prefix}landclaim config min_size 10`,
-        /** Set required buffer distance between neighboring claims in blocks (Admin only) */
         `{prefix}landclaim config claim_buffer 5`,
-        /** Reset all land claim configuration variables to global default values (Admin only) */
         `{prefix}landclaim config reset`,
     ],
     category: "Utility",
@@ -1214,17 +1259,12 @@ export const claimCommand: Command = {
     guiInstructions: {
         formType: "ActionFormData",
         title: "Land Claim Management",
-        /**
-         * Dynamic getter for the Land Claim command description and UI documentation.
-         * Pulls active configuration limits from `LandClaimManager` to render accurate,
-         * real-time player guidance and administrative privileges.
-         *
-         * @returns {string} Formatted Minecraft color-coded UI description string.
-         */
         get description(): string {
             const config = LandClaimManager.config;
+            const statusText = config.CLAIMS_ENABLED ? "§aENABLED" : "§cDISABLED";
             return (
                 "§l§2Land Claim Management§r\n" +
+                `§7Global Claiming Status: ${statusText}\n` +
                 "§7Protect and manage your personal and faction territories across dimensions.\n\n" +
                 "§e§lWand Selection Setup:§r\n" +
                 "§7• Hold a §aGolden Hoe§7 and right-click §fCorner 1§7 to place the primary anchor.\n" +
@@ -1297,6 +1337,22 @@ export const claimCommand: Command = {
                 generateModalForm: true,
             },
             {
+                name: "Enable Land Claims",
+                icon: "textures/ui/confirm.png",
+                description: "Allow players to claim land (admin only).",
+                securityClearance: 4,
+                command: ["config", "enable"],
+                generateModalForm: false,
+            },
+            {
+                name: "Disable Land Claims",
+                icon: "textures/ui/cancel.png",
+                description: "Prevent players from claiming land (admin only).",
+                securityClearance: 4,
+                command: ["config", "disable"],
+                generateModalForm: false,
+            },
+            {
                 name: "Reconfigure Claim Settings",
                 icon: "textures/ui/gear.png",
                 description: "Reconfigure land claim limits and spatial buffers (admin only).",
@@ -1331,7 +1387,7 @@ export const claimCommand: Command = {
                 name: "\nConfig Parameter:",
                 type: "dropdown",
                 sourceType: "custom",
-                options: ["min_size", "max_size", "max_area", "max_claims", "buffer"],
+                options: ["enable", "disable", "min_size", "max_size", "max_area", "max_claims", "buffer"],
                 requiredFields: ["configKey"],
             },
             {
