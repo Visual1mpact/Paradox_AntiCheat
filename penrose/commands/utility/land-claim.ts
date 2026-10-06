@@ -10,9 +10,7 @@ import { PlayerCache } from "../../classes/cache/player-cache";
 // TYPES & LOCAL DATA STRUCTURES
 // ==========================================
 
-/**
- * Tracks selection state during the 2-step wand interaction.
- */
+/** State tracking player corner selections via selection wand */
 interface SelectionState {
     dimensionId: string;
     pos1?: Vector3D;
@@ -20,13 +18,24 @@ interface SelectionState {
     timestamp: number;
 }
 
-/**
- * Active tracking state for dynamic gamemode enforcement on trespassers.
- */
+/** Active state for tracking players inside unauthorized claims */
 interface DynamicTrackedPlayer {
     intervalId: number;
     originalGameMode: GameMode;
     claim: ClaimData;
+}
+
+/**
+ * Indexed owner information used for fast offline claim discovery.
+ *
+ * ownerUuid is the authoritative player identity. ownerName is retained
+ * for administrator-facing identification, especially while the player
+ * is offline. claimIds contains every claim currently owned by this UUID.
+ */
+interface ClaimOwnerRecord {
+    ownerUuid: string;
+    ownerName: string;
+    claimIds: Set<string>;
 }
 
 // ==========================================
@@ -34,10 +43,8 @@ interface DynamicTrackedPlayer {
 // ==========================================
 
 /**
- * Converts continuous floating-point world coordinates into discrete block integer coordinates.
- *
- * @param p - Continuous 3D vector coordinate.
- * @returns Floored integer vector coordinate.
+ * Floors coordinate components to discrete integer values.
+ * @param p Position vector to floor
  */
 function floorVec(p: Vector3D): Vector3D {
     return {
@@ -48,60 +55,50 @@ function floorVec(p: Vector3D): Vector3D {
 }
 
 /**
- * Calculates a unique 16x16 chunk identifier string while accounting for negative coordinates.
- *
- * @param x - Block X coordinate.
- * @param z - Block Z coordinate.
- * @returns Chunk key string formatted as "chunkX,chunkZ".
+ * Generates a string chunk key for a given block coordinate.
+ * @param x X coordinate
+ * @param z Z coordinate
  */
 function getChunkKey(x: number, z: number): string {
     return `${Math.floor(x / 16)},${Math.floor(z / 16)}`;
 }
 
 /**
- * Evaluates whether two 3D bounding boxes intersect or overlap.
- *
- * @param minA - Minimum bounds of box A.
- * @param maxA - Maximum bounds of box A.
- * @param minB - Minimum bounds of box B.
- * @param maxB - Maximum bounds of box B.
- * @returns `true` if the boxes intersect at any point; otherwise `false`.
+ * Checks bounding box intersection between two axis-aligned 3D boxes.
+ * @param minA Minimum bounds for box A
+ * @param maxA Maximum bounds for box A
+ * @param minB Minimum bounds for box B
+ * @param maxB Maximum bounds for box B
  */
 function doBoxesIntersect(minA: Vector3D, maxA: Vector3D, minB: Vector3D, maxB: Vector3D): boolean {
     return minA.x <= maxB.x && maxA.x >= minB.x && minA.y <= maxB.y && maxA.y >= minB.y && minA.z <= maxB.z && maxA.z >= minB.z;
 }
 
 /**
- * Determines whether a given 3D coordinate lies strictly within a bounding box.
- *
- * @param p - Point vector to check.
- * @param min - Minimum box boundary.
- * @param max - Maximum box boundary.
- * @returns `true` if the point is inside the box; otherwise `false`.
+ * Checks if a point lies within a bounding box.
+ * @param p Point coordinates
+ * @param min Minimum box boundary
+ * @param max Maximum box boundary
  */
 function isPointInBox(p: Vector3D, min: Vector3D, max: Vector3D): boolean {
     return p.x >= min.x && p.x <= max.x && p.y >= min.y && p.y <= max.y && p.z >= min.z && p.z <= max.z;
 }
 
 /**
- * Checks if a point lies within a bounding box expanded by an outer margin/buffer.
- *
- * @param p - Point vector to evaluate.
- * @param min - Minimum box boundary.
- * @param max - Maximum box boundary.
- * @param buffer - Outer buffer distance in blocks.
- * @returns `true` if the point falls within the buffered region; otherwise `false`.
+ * Checks if a point lies within a bounding box padded by a surrounding buffer.
+ * @param p Point coordinates
+ * @param min Minimum box boundary
+ * @param max Maximum box boundary
+ * @param buffer Additional distance padding
  */
 function isPointInBoxWithBuffer(p: Vector3D, min: Vector3D, max: Vector3D, buffer: number): boolean {
     return p.x >= min.x - buffer && p.x <= max.x + buffer && p.y >= min.y - buffer && p.y <= max.y + buffer && p.z >= min.z - buffer && p.z <= max.z + buffer;
 }
 
 /**
- * Validates whether a proposed claim size meets configured bounds.
- *
- * @param p1 - First corner vector.
- * @param p2 - Second corner vector.
- * @returns Object indicating validity status and descriptive error message if invalid.
+ * Validates selection area size constraints according to system configuration.
+ * @param p1 First corner position
+ * @param p2 Second corner position
  */
 function validateClaimDimensions(p1: Vector3D, p2: Vector3D): { valid: boolean; error?: string } {
     const width = Math.abs(p1.x - p2.x) + 1;
@@ -126,9 +123,7 @@ function validateClaimDimensions(p1: Vector3D, p2: Vector3D): { valid: boolean; 
 }
 
 /**
- * Generates a randomized RGB color object with components between 0 and 255.
- *
- * @returns Randomized RGB color object.
+ * Generates random RGB color structure.
  */
 function getRandomRGBColor(): RGBColor {
     return {
@@ -139,10 +134,8 @@ function getRandomRGBColor(): RGBColor {
 }
 
 /**
- * Maps an RGB color to the closest Minecraft raw chat formatting color prefix.
- *
- * @param color - RGB color components.
- * @returns Minecraft color code prefix (e.g., "§a").
+ * Maps RGB color values to the closest Minecraft formatting color code.
+ * @param color Source RGB color
  */
 function getNearestMinecraftColorCode(color: RGBColor): string {
     const codes = [
@@ -173,73 +166,63 @@ function getNearestMinecraftColorCode(color: RGBColor): string {
 // LAND CLAIM MANAGER CLASS
 // ==========================================
 
-/**
- * Core manager responsible for persistent land claim storage, spatial chunk indexing,
- * boundary visualization, and event protection hooks.
- */
+/** Handles administrative logic, event checks, dynamic properties, and caching for land claims */
 export class LandClaimManager {
     private static instance: LandClaimManager;
 
-    /**
-     * Reads configuration limits for land claim sizing, allocations, and spatial buffers.
-     * Dynamic getters fetch live values from world dynamic properties with default fallbacks safely at runtime.
-     */
+    /** Dynamic dynamic properties configuration accessor */
     public static get config() {
         return {
-            /** Indicates whether new land claims are currently enabled globally (default: false) */
             get CLAIMS_ENABLED(): boolean {
                 return (world.getDynamicProperty("claim_enabled") as boolean) ?? false;
             },
-            /** Minimum horizontal edge length in blocks */
             get MIN_SIZE(): number {
                 return (world.getDynamicProperty("claim_min_size") as number) ?? 10;
             },
-            /** Maximum horizontal edge length in blocks */
             get MAX_SIZE(): number {
                 return (world.getDynamicProperty("claim_max_size") as number) ?? 128;
             },
-            /** Maximum total surface area footprint in blocks (X * Z) */
             get MAX_AREA(): number {
                 return (world.getDynamicProperty("claim_max_area") as number) ?? 16384;
             },
-            /** Maximum number of claims allowed per player */
             get MAX_CLAIMS_PER_PLAYER(): number {
                 return (world.getDynamicProperty("claim_max_claims_per_player") as number) ?? 3;
             },
-            /** Minimum block distance required between separate player claims */
             get CLAIM_BUFFER(): number {
                 return (world.getDynamicProperty("claim_buffer") as number) ?? 5;
             },
         };
     }
 
-    // Array holding active unsubscribe cleanup callbacks for event handlers
     private eventSubscriptions: Array<() => void> = [];
-
-    // Fast spatial index: DimensionId -> ChunkKey -> Set of Claim IDs
     private chunkMap = new Map<string, Map<string, Set<string>>>();
-
-    // In-memory claim cache: ClaimId -> ClaimData
     private claimsCache = new Map<string, ClaimData>();
 
-    // Wand selection state cache keyed by Player ID
+    /**
+     * O(1) owner lookup by authoritative player.id.
+     * This index is populated from the persistent claim database, so offline
+     * players remain discoverable even when they are not in PlayerCache.
+     */
+    private claimsByOwner = new Map<string, ClaimOwnerRecord>();
+
+    /**
+     * Case-insensitive owner-name lookup. Names are identifiers for human
+     * targeting only; ownerUuid remains authoritative for ownership checks.
+     */
+    private ownerNameIndex = new Map<string, string>();
+
     private playerSelections = new Map<string, SelectionState>();
-
-    // Concurrency guard lock for claim creation requests
     private pendingClaimLocks = new Set<string>();
-
-    // Active tracking loops for trespassers forced into Adventure mode: Player UUID -> DynamicTrackedPlayer
     private trackedPlayers = new Map<string, DynamicTrackedPlayer>();
 
     public static readonly WAND_ITEM_ID = "minecraft:golden_hoe";
-    public static readonly SELECTION_TIMEOUT_MS = 300000; // 5 minutes before active selection resets
-    public static readonly BUFFER_EXIT_DISTANCE = 5; // Distance outside claim required to restore original gamemode
-    public static readonly TRACKING_INTERVAL_TICKS = 10; // Location polling rate (~0.5s)
+    public static readonly SELECTION_TIMEOUT_MS = 300000;
+    public static readonly BUFFER_EXIT_DISTANCE = 5;
+    public static readonly TRACKING_INTERVAL_TICKS = 10;
 
     private constructor() {
         PlayerLocationCache.init();
 
-        // Permanent player cleanup handler when leaving the game
         EventCoordinator.unsubscribeAfter("playerLeave", (ev) => {
             this.playerSelections.delete(ev.playerId);
             this.stopTrackingPlayer(ev.playerId);
@@ -247,9 +230,7 @@ export class LandClaimManager {
     }
 
     /**
-     * Gets or creates the singleton instance of LandClaimManager.
-     *
-     * @returns The active LandClaimManager instance.
+     * Retrieves singleton instance of LandClaimManager.
      */
     public static getInstance(): LandClaimManager {
         if (!LandClaimManager.instance) {
@@ -259,9 +240,8 @@ export class LandClaimManager {
     }
 
     /**
-     * Synchronizes global claim toggle dynamic property and updates event subscriptions.
-     *
-     * @param enabled - Enable or disable land claims.
+     * Enables or disables globally configured land claim features.
+     * @param enabled Target toggle state
      */
     public setClaimsEnabled(enabled: boolean): void {
         world.setDynamicProperty("claim_enabled", enabled);
@@ -269,7 +249,7 @@ export class LandClaimManager {
     }
 
     /**
-     * Evaluates current dynamic property state and attaches/detaches event listeners dynamically.
+     * Synchronizes registered Minecraft events with global plugin enabled flags.
      */
     public updateEventSubscriptionState(): void {
         const isEnabled = LandClaimManager.config.CLAIMS_ENABLED;
@@ -282,12 +262,10 @@ export class LandClaimManager {
     }
 
     /**
-     * Loads saved claims from persistent storage into memory, builds the spatial chunk index,
-     * and sets up initial event subscriptions once the world is loaded.
+     * Initializes claim caches and synchronization from database storage.
      */
     public async init(): Promise<void> {
         try {
-            // Safe to call dynamic properties now that world is initialized
             this.updateEventSubscriptionState();
 
             const entries = await landClaimsDB.entries();
@@ -308,11 +286,17 @@ export class LandClaimManager {
     // ==========================================
 
     /**
-     * Registers a claim in memory and maps it to all intersecting 16x16 chunk buckets.
-     *
-     * @param claim - Claim data to cache.
+     * Adds claim spatial keys to chunk maps and local cache.
+     * @param claim Claim dataset
      */
     private cacheClaim(claim: ClaimData): void {
+        // Protect the indexes from duplicate/stale entries if the same claim
+        // ID is ever loaded or refreshed more than once.
+        const existingClaim = this.claimsCache.get(claim.id);
+        if (existingClaim) {
+            this.removeClaimIndexes(existingClaim);
+        }
+
         this.claimsCache.set(claim.id, claim);
 
         if (!this.chunkMap.has(claim.dimensionId)) {
@@ -332,14 +316,97 @@ export class LandClaimManager {
                 dimMap.get(chunkKey)!.add(claim.id);
             }
         }
+
+        // Index the claim by its authoritative owner UUID.
+        let ownerRecord = this.claimsByOwner.get(claim.ownerUuid);
+        if (!ownerRecord) {
+            ownerRecord = {
+                ownerUuid: claim.ownerUuid,
+                ownerName: claim.ownerName,
+                claimIds: new Set<string>(),
+            };
+            this.claimsByOwner.set(claim.ownerUuid, ownerRecord);
+        } else {
+            // Keep the most recently encountered stored name available for
+            // administrator-facing identification.
+            ownerRecord.ownerName = claim.ownerName;
+        }
+
+        ownerRecord.claimIds.add(claim.id);
+
+        // Index the stored name as a human-friendly lookup key.
+        if (claim.ownerName) {
+            this.ownerNameIndex.set(claim.ownerName.toLowerCase(), claim.ownerUuid);
+        }
     }
 
     /**
-     * Performs an O(1) spatial query to retrieve the claim occupying a specific location.
-     *
-     * @param pos - 3D world coordinate to check.
-     * @param dimensionId - Dimension string identifier (e.g., "minecraft:overworld").
-     * @returns The matching ClaimData if found; otherwise `undefined`.
+     * Removes a claim from every in-memory index.
+     * @param claim Claim being removed
+     */
+    private removeClaimIndexes(claim: ClaimData): void {
+        this.claimsCache.delete(claim.id);
+
+        // Remove from spatial chunk indexes.
+        const dimMap = this.chunkMap.get(claim.dimensionId);
+        if (dimMap) {
+            const minChunkX = Math.floor(claim.min.x / 16);
+            const maxChunkX = Math.floor(claim.max.x / 16);
+            const minChunkZ = Math.floor(claim.min.z / 16);
+            const maxChunkZ = Math.floor(claim.max.z / 16);
+
+            for (let cx = minChunkX; cx <= maxChunkX; cx++) {
+                for (let cz = minChunkZ; cz <= maxChunkZ; cz++) {
+                    const chunkKey = `${cx},${cz}`;
+                    const claimIds = dimMap.get(chunkKey);
+                    if (!claimIds) continue;
+
+                    claimIds.delete(claim.id);
+                    if (claimIds.size === 0) {
+                        dimMap.delete(chunkKey);
+                    }
+                }
+            }
+
+            if (dimMap.size === 0) {
+                this.chunkMap.delete(claim.dimensionId);
+            }
+        }
+
+        // Remove from the owner index.
+        const ownerRecord = this.claimsByOwner.get(claim.ownerUuid);
+        if (ownerRecord) {
+            ownerRecord.claimIds.delete(claim.id);
+
+            if (ownerRecord.claimIds.size === 0) {
+                this.claimsByOwner.delete(claim.ownerUuid);
+            }
+        }
+
+        // Remove the name lookup only when it still resolves to this owner.
+        const normalizedName = claim.ownerName?.toLowerCase();
+        if (normalizedName && this.ownerNameIndex.get(normalizedName) === claim.ownerUuid) {
+            this.ownerNameIndex.delete(normalizedName);
+
+            // The same owner may have older claims containing an older name.
+            // Restore one of those names if it is still represented.
+            const remainingOwner = this.claimsByOwner.get(claim.ownerUuid);
+            if (remainingOwner) {
+                for (const remainingClaimId of remainingOwner.claimIds) {
+                    const remainingClaim = this.claimsCache.get(remainingClaimId);
+                    if (remainingClaim?.ownerName) {
+                        this.ownerNameIndex.set(remainingClaim.ownerName.toLowerCase(), claim.ownerUuid);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Retrieves existing claim containing specified coordinates.
+     * @param pos Location vector
+     * @param dimensionId Target dimension identifier string
      */
     public getClaimAt(pos: Vector3D, dimensionId: string): ClaimData | undefined {
         const floorPos = floorVec(pos);
@@ -360,40 +427,96 @@ export class LandClaimManager {
     }
 
     /**
-     * Retrieves all claims owned by a specific player UUID or ID.
-     *
-     * @param ownerUuid - Target player ID/UUID string.
-     * @returns Array of ClaimData matching the owner.
+     * Fetches claims owned by a target player identifier or name.
+     * @param ownerUuidOrName Search criteria string
      */
-    public getClaimsByOwner(ownerUuid: string): ClaimData[] {
+    public getClaimsByOwner(ownerUuidOrName: string): ClaimData[] {
+        const identifier = ownerUuidOrName.trim();
+        if (!identifier) return [];
+
+        // UUID/ID is the authoritative lookup path.
+        let ownerRecord = this.claimsByOwner.get(identifier);
+
+        // Fall back to case-insensitive stored player name for offline admins.
+        if (!ownerRecord) {
+            const ownerUuid = this.ownerNameIndex.get(identifier.toLowerCase());
+            if (ownerUuid) {
+                ownerRecord = this.claimsByOwner.get(ownerUuid);
+            }
+        }
+
+        if (!ownerRecord) return [];
+
         const results: ClaimData[] = [];
-        for (const claim of this.claimsCache.values()) {
-            if (claim.ownerUuid === ownerUuid) {
+        for (const claimId of ownerRecord.claimIds) {
+            const claim = this.claimsCache.get(claimId);
+            if (claim) {
                 results.push(claim);
             }
         }
+
         return results;
     }
 
     /**
-     * Retrieves a specific claim by its unique ID.
-     *
-     * @param claimId - The claim ID string.
-     * @returns Target ClaimData if present; otherwise `undefined`.
+     * Retrieves the indexed owner record by UUID or stored player name.
+     * @param identifier Player UUID/ID or case-insensitive player name
      */
-    public getClaimById(claimId: string): ClaimData | undefined {
-        return this.claimsCache.get(claimId);
+    public getClaimOwner(identifier: string): ClaimOwnerRecord | undefined {
+        const value = identifier.trim();
+        if (!value) return undefined;
+
+        const direct = this.claimsByOwner.get(value);
+        if (direct) return direct;
+
+        const ownerUuid = this.ownerNameIndex.get(value.toLowerCase());
+        return ownerUuid ? this.claimsByOwner.get(ownerUuid) : undefined;
     }
 
     /**
-     * Checks whether a proposed bounding box overlaps with existing claims or violates
-     * the mandatory buffer distance against claims owned by other players.
-     *
-     * @param min - Minimum bound of proposed box.
-     * @param max - Maximum bound of proposed box.
-     * @param dimensionId - Dimension identifier string.
-     * @param ownerUuid - UUID of player requesting claim creation.
-     * @returns `true` if an overlap or buffer violation exists; otherwise `false`.
+     * Returns every player who currently owns at least one registered claim.
+     * Includes offline players because the data comes from the persistent
+     * claim index rather than the currently connected-player cache.
+     */
+    public getClaimOwners(): ClaimOwnerRecord[] {
+        return Array.from(this.claimsByOwner.values());
+    }
+
+    /**
+     * Retrieves a specific claim by ID or owner search string.
+     * Supports exact ID, case-insensitive ID, or single claim owner match.
+     * @param claimIdOrOwner Unique ID or player query string
+     */
+    public getClaimById(claimIdOrOwner: string): ClaimData | undefined {
+        // Direct map key lookup
+        if (this.claimsCache.has(claimIdOrOwner)) {
+            return this.claimsCache.get(claimIdOrOwner);
+        }
+
+        const lowerSearch = claimIdOrOwner.toLowerCase();
+
+        // Case-insensitive ID lookup
+        for (const [id, claim] of this.claimsCache.entries()) {
+            if (id.toLowerCase() === lowerSearch) {
+                return claim;
+            }
+        }
+
+        // Owner-prefixed fallback lookup
+        const ownerClaims = this.getClaimsByOwner(claimIdOrOwner);
+        if (ownerClaims.length === 1) {
+            return ownerClaims[0];
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Determines whether new region bounds overlap with existing claims or violate buffer zones.
+     * @param min Minimum bounds vector
+     * @param max Maximum bounds vector
+     * @param dimensionId Dimension identifier string
+     * @param ownerUuid Creating owner player UUID
      */
     private hasOverlapOrBufferViolation(min: Vector3D, max: Vector3D, dimensionId: string, ownerUuid: string): boolean {
         const dimMap = this.chunkMap.get(dimensionId);
@@ -422,12 +545,10 @@ export class LandClaimManager {
 
                     const isSameOwner = existing.ownerUuid === ownerUuid;
 
-                    // 1. Direct Overlap Check (Applies to all players, including the same owner)
                     if (doBoxesIntersect(min, max, existing.min, existing.max)) {
                         return true;
                     }
 
-                    // 2. Buffer Radius Check (Applies only to separate/unallied owners)
                     if (!isSameOwner) {
                         const bufferedMin: Vector3D = {
                             x: existing.min.x - buffer,
@@ -455,13 +576,11 @@ export class LandClaimManager {
     // ==========================================
 
     /**
-     * Spawns single armor stands placed directly on the blocks touched by the selection wand at the claim corners.
-     *
-     * @param dimension - World dimension to spawn entities in.
-     * @param claim - Claim data used for color mapping.
-     * @param pos1 - First corner block touched by the wand.
-     * @param pos2 - Second corner block touched by the wand.
-     * @returns Array of spawned armor stand entity UUIDs.
+     * Spawns armor stand corner markers equipped with colored helmets.
+     * @param dimension Target world dimension
+     * @param claim Created claim data
+     * @param pos1 Selection primary location
+     * @param pos2 Selection secondary location
      */
     private spawnCornerArmorStands(dimension: Dimension, claim: ClaimData, pos1: Vector3D, pos2: Vector3D): string[] {
         const markerUuids: string[] = [];
@@ -508,10 +627,9 @@ export class LandClaimManager {
     }
 
     /**
-     * Removes all marker armor stands associated with a claim from the world.
-     *
-     * @param dimension - Dimension where marker entities reside.
-     * @param claim - Target claim data.
+     * Removes installed armor stand corner markers associated with a claim.
+     * @param dimension Dimension holding target entities
+     * @param claim Related claim record
      */
     private removeCornerArmorStands(dimension: Dimension, claim: ClaimData): void {
         const entities = dimension.getEntities({
@@ -522,7 +640,7 @@ export class LandClaimManager {
             try {
                 entity.remove();
             } catch (err) {
-                // Ignore removal errors for unloaded entities
+                // Ignore removal errors
             }
         }
     }
@@ -532,15 +650,12 @@ export class LandClaimManager {
     // ==========================================
 
     /**
-     * Atomically creates a sky-to-bedrock land claim and places single armor stand corner markers directly on the clicked block locations.
-     *
-     * @param player - Player creating the claim.
-     * @param p1 - First bounding corner vector.
-     * @param p2 - Second bounding corner vector.
-     * @returns `true` if creation succeeded; otherwise `false`.
+     * Creates new land claim bound to coordinates provided by player.
+     * @param player Requesting player reference
+     * @param p1 Primary corner location
+     * @param p2 Secondary corner location
      */
     public async createClaim(player: Player, p1: Vector3D, p2: Vector3D): Promise<boolean> {
-        // Quietly fail if land claiming is disabled globally
         if (!LandClaimManager.config.CLAIMS_ENABLED) {
             return false;
         }
@@ -553,14 +668,12 @@ export class LandClaimManager {
 
         const config = LandClaimManager.config;
 
-        // 1. Check max claims limit per player
         const existingClaims = this.getClaimsByOwner(player.id);
         if (existingClaims.length >= config.MAX_CLAIMS_PER_PLAYER) {
             player.sendMessage(`§o§c[Paradox] You have reached the maximum claim limit of ${config.MAX_CLAIMS_PER_PLAYER} claims.`);
             return false;
         }
 
-        // 2. Validate claim dimensions and area rules
         const validation = validateClaimDimensions(p1, p2);
         if (!validation.valid) {
             player.sendMessage(`§o§c[Paradox] ${validation.error}`);
@@ -587,13 +700,14 @@ export class LandClaimManager {
                 z: Math.max(fP1.z, fP2.z),
             };
 
-            // 3. Validate direct overlaps and spatial buffer distance constraints
             if (this.hasOverlapOrBufferViolation(min, max, playerDimension.id, player.id)) {
                 player.sendMessage(`§o§c[Paradox] Cannot claim: Selected area overlaps with an existing claim or is within ${config.CLAIM_BUFFER} blocks of another player's territory.`);
                 return false;
             }
 
-            const claimId = `claim_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+            // Sanitize owner name for ID prefix
+            const sanitizedOwner = player.name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+            const claimId = `${sanitizedOwner}_claim_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
             const claimColor = getRandomRGBColor();
 
             const claim: ClaimData = {
@@ -622,10 +736,8 @@ export class LandClaimManager {
     }
 
     /**
-     * Deletes a claim, removes its spatial mapping, and cleans up entity markers.
-     *
-     * @param claimId - ID of claim to delete.
-     * @returns `true` if claim existed and was removed; otherwise `false`.
+     * Deletes specified land claim and cleans up related structures/markers.
+     * @param claimId Unique identifier string for target claim
      */
     public async deleteClaim(claimId: string): Promise<boolean> {
         const claim = this.claimsCache.get(claimId);
@@ -636,17 +748,17 @@ export class LandClaimManager {
             this.removeCornerArmorStands(dim, claim);
         }
 
-        this.claimsCache.delete(claimId);
+        // Remove the claim from the primary cache, spatial index, and owner
+        // index before returning so no stale claim can be discovered later.
+        this.removeClaimIndexes(claim);
         await landClaimsDB.delete(claimId);
         return true;
     }
 
     /**
-     * Adds a trusted member to an existing claim.
-     *
-     * @param claimId - ID of claim to update.
-     * @param memberIdentifier - Target player ID/UUID or name to trust.
-     * @returns `true` if member was successfully added; otherwise `false`.
+     * Adds dynamic trusted member entry to target claim permissions.
+     * @param claimId Target claim ID
+     * @param memberIdentifier Player UUID or account name
      */
     public async addMember(claimId: string, memberIdentifier: string): Promise<boolean> {
         const claim = this.claimsCache.get(claimId);
@@ -660,11 +772,9 @@ export class LandClaimManager {
     }
 
     /**
-     * Removes a trusted member from an existing claim.
-     *
-     * @param claimId - ID of claim to update.
-     * @param memberIdentifier - Target player ID/UUID or name to untrust.
-     * @returns `true` if member was found and removed; otherwise `false`.
+     * Removes existing trusted member entry from claim permissions.
+     * @param claimId Target claim ID
+     * @param memberIdentifier Player UUID or account name
      */
     public async removeMember(claimId: string, memberIdentifier: string): Promise<boolean> {
         const claim = this.claimsCache.get(claimId);
@@ -680,21 +790,17 @@ export class LandClaimManager {
     }
 
     /**
-     * Checks if a player is authorized to modify or interact inside a claim.
-     *
-     * @param player - Target player.
-     * @param claim - Target claim.
-     * @returns `true` if player is owner or member; otherwise `false`.
+     * Verifies whether player has authorized builder permissions on target claim.
+     * @param player Query player reference
+     * @param claim Target claim dataset
      */
     public isAuthorized(player: Player, claim: ClaimData): boolean {
         return claim.ownerUuid === player.id || claim.ownerName === player.name || claim.members.includes(player.id) || claim.members.includes(player.name);
     }
 
     /**
-     * Converts a direction enum into a 3D unit direction offset.
-     *
-     * @param direction - Direction facing.
-     * @returns Vector offset corresponding to specified direction.
+     * Converts Minecraft cardinal or spatial directions to vector axis offsets.
+     * @param direction Target face direction
      */
     private getDirectionOffset(direction: Direction): Vector3D {
         switch (direction) {
@@ -720,11 +826,9 @@ export class LandClaimManager {
     // ==========================================
 
     /**
-     * Forces an unauthorized player into Adventure mode while inside a claim and runs
-     * a dynamic polling loop that restores their original gamemode upon exiting the buffer region.
-     *
-     * @param player - Trespassing player.
-     * @param claim - Target claim being protected.
+     * Temporarily enforces Adventure gamemode protection when unauthorized players enter claim bounds.
+     * @param player Interacting player
+     * @param claim Affected claim dataset
      */
     private enforceGamemodeSafeguard(player: Player, claim: ClaimData): void {
         if (this.trackedPlayers.has(player.id)) return;
@@ -761,9 +865,8 @@ export class LandClaimManager {
     }
 
     /**
-     * Stops and clears tracking intervals for a given player ID.
-     *
-     * @param playerId - UUID string of player to stop tracking.
+     * Clears tracking intervals for monitored visitors.
+     * @param playerId System ID of tracked target
      */
     private stopTrackingPlayer(playerId: string): void {
         const tracking = this.trackedPlayers.get(playerId);
@@ -777,13 +880,10 @@ export class LandClaimManager {
     // DYNAMIC EVENT SUBSCRIPTION LOGIC
     // ==========================================
 
-    /**
-     * Subscribes land claim protection event handlers if they are not already subscribed.
-     */
+    /** Registers Minecraft scripting engine protection event listeners */
     private registerEventHandlers(): void {
         if (this.eventSubscriptions.length > 0) return;
 
-        // 1. Entity Damage Intercept
         const unsubHurt = EventCoordinator.subscribeBefore("entityHurt", (ev) => {
             const { hurtEntity, damageSource } = ev;
 
@@ -811,7 +911,6 @@ export class LandClaimManager {
             }
         });
 
-        // 2. Wand Interaction, Block Right-Click & Bucket Liquid Interception
         const unsubInteract = EventCoordinator.subscribeBefore("playerInteractWithBlock", (ev) => {
             const { player, block, itemStack, blockFace } = ev;
 
@@ -851,7 +950,6 @@ export class LandClaimManager {
             }
         });
 
-        // 3. Block Placement, Piston, & Redstone Safeguards
         const unsubPlace = EventCoordinator.subscribeBefore("playerPlaceBlock", (ev) => {
             const { player, block, face } = ev;
             const transform = PlayerLocationCache.getTransform(player);
@@ -908,7 +1006,6 @@ export class LandClaimManager {
             }
         });
 
-        // 4. Block Break Protection
         const unsubBreak = EventCoordinator.subscribeBefore("playerBreakBlock", (ev) => {
             const transform = PlayerLocationCache.getTransform(ev.player);
             const dimId = transform?.dimension.id ?? ev.player.dimension.id;
@@ -920,7 +1017,6 @@ export class LandClaimManager {
             }
         });
 
-        // 5. Explosion Interception
         const unsubExplosion = EventCoordinator.subscribeBefore("explosion", (ev) => {
             const dimId = ev.dimension.id;
             const safeBlocks = ev.getImpactedBlocks().filter((block) => {
@@ -929,13 +1025,10 @@ export class LandClaimManager {
             ev.setImpactedBlocks(safeBlocks);
         });
 
-        // Save all unsubscribe callbacks
         this.eventSubscriptions = [unsubHurt, unsubInteract, unsubPlace, unsubBreak, unsubExplosion];
     }
 
-    /**
-     * Unsubscribes and cleans up all active protection event handlers.
-     */
+    /** Unsubscribes active listeners from world event coordinators */
     private unregisterEventHandlers(): void {
         for (const unsubscribe of this.eventSubscriptions) {
             try {
@@ -952,10 +1045,9 @@ export class LandClaimManager {
     // ==========================================
 
     /**
-     * Processes selection clicks using the wand tool to register two bounding corners.
-     *
-     * @param player - Player using the wand.
-     * @param loc - Block location clicked.
+     * Handles selection wand interactions for set claim point parameters.
+     * @param player Triggering player reference
+     * @param loc Target block vector
      */
     private handleWandClick(player: Player, loc: Vector3D): void {
         if (!LandClaimManager.config.CLAIMS_ENABLED) {
@@ -988,11 +1080,12 @@ export class LandClaimManager {
     }
 }
 
-// Instantiate Singleton on Script Load
 export const landClaims = LandClaimManager.getInstance();
 
 /**
- * Helper to handle the 'config' subcommand.
+ * Executes runtime configuration subcommands.
+ * @param sender Invoking player
+ * @param args Command argument list
  */
 function handleConfigCommand(sender: Player, args: string[]): void {
     const param = args[1]?.toLowerCase();
@@ -1006,7 +1099,6 @@ function handleConfigCommand(sender: Player, args: string[]): void {
         world.setDynamicProperty("claim_max_claims_per_player", undefined);
         world.setDynamicProperty("claim_buffer", undefined);
 
-        // Reset state to disabled and unsubscribe event handlers
         manager.setClaimsEnabled(false);
 
         sender.sendMessage("§2[§7Paradox§2]§o§7 All land claim configuration parameters have been reset to default values.");
@@ -1018,7 +1110,6 @@ function handleConfigCommand(sender: Player, args: string[]): void {
         return;
     }
 
-    // Toggle land claiming on or off and update event subscriptions dynamically
     if (param === "enable" || param === "disable" || param === "enabled") {
         const enableState = param === "enable" || (param === "enabled" && valStr?.toLowerCase() === "true");
         manager.setClaimsEnabled(enableState);
@@ -1060,7 +1151,9 @@ function handleConfigCommand(sender: Player, args: string[]): void {
 }
 
 /**
- * Helper to handle the 'online' subcommand.
+ * Outputs registered land claims held by online players.
+ * @param sender Invoking player
+ * @param manager System manager reference
  */
 function handleOnlineCommand(sender: Player, manager: LandClaimManager): void {
     const activePlayers = PlayerCache.getAllPlayers();
@@ -1097,7 +1190,11 @@ function handleOnlineCommand(sender: Player, manager: LandClaimManager): void {
 }
 
 /**
- * Helper to handle the 'list' subcommand.
+ * Handles claim listing details display for requested target or sender.
+ * @param sender Invoking player
+ * @param manager System manager reference
+ * @param isAdmin Permission flag
+ * @param targetArg Requested player target identifier
  */
 function handleListCommand(sender: Player, manager: LandClaimManager, isAdmin: boolean, targetArg?: string): void {
     let targetId = sender.id;
@@ -1110,8 +1207,14 @@ function handleListCommand(sender: Player, manager: LandClaimManager, isAdmin: b
             targetId = targetOnlinePlayer.id;
             targetName = targetOnlinePlayer.name;
         } else if (isAdmin) {
-            targetId = targetArg;
-            targetName = targetArg;
+            const owner = manager.getClaimOwner(targetArg);
+            if (!owner) {
+                sender.sendMessage(`§o§c[Paradox] No registered claim owner could be found matching "${targetArg}".`);
+                return;
+            }
+
+            targetId = owner.ownerUuid;
+            targetName = owner.ownerName;
         } else {
             sender.sendMessage(`§o§c[Paradox] Player "${targetArg}" is not online.`);
             return;
@@ -1138,16 +1241,55 @@ function handleListCommand(sender: Player, manager: LandClaimManager, isAdmin: b
         }),
         ` `,
     ];
+
     sender.sendMessage(listLines.join("\n"));
 }
 
 /**
- * Helper to handle 'trust' and 'untrust' member operations.
+ * Lists every registered claim owner, including players who are currently
+ * offline. This is intentionally backed by the persistent owner index.
+ * @param sender Invoking administrator
+ * @param manager System manager reference
+ */
+function handleOwnersCommand(sender: Player, manager: LandClaimManager): void {
+    const owners = manager.getClaimOwners();
+
+    if (owners.length === 0) {
+        sender.sendMessage("§o§c[Paradox] No registered land claim owners were found.");
+        return;
+    }
+
+    const onlineIds = new Set(PlayerCache.getAllPlayers().map((player) => player.id));
+    owners.sort((a, b) => a.ownerName.localeCompare(b.ownerName, undefined, { sensitivity: "base" }));
+
+    const lines: string[] = [` `, `§2[§7Paradox§2]§o§7 Registered Claim Owners (§a${owners.length}§7):`, `§7Owners shown here may be offline. UUID/ID is authoritative.`, ` `];
+
+    for (const owner of owners) {
+        const status = onlineIds.has(owner.ownerUuid) ? "§aONLINE" : "§8OFFLINE";
+        const claimCount = owner.claimIds.size;
+        lines.push(`  §2• §f${owner.ownerName} §7[${status}§7] §7Claims: §e${claimCount} §7| ID: §8${owner.ownerUuid}`);
+    }
+
+    // Keep chat packets reasonably sized when a server has many claim owners.
+    const CHUNK_SIZE = 8;
+    for (let i = 0; i < lines.length; i += CHUNK_SIZE) {
+        sender.sendMessage(lines.slice(i, i + CHUNK_SIZE).join("\n"));
+    }
+}
+
+/**
+ * Processes trust and untrust permission mutations.
+ * @param sender Invoking player
+ * @param manager System manager reference
+ * @param isAdmin Permission flag
+ * @param isTrust Action state (true for trust, false for untrust)
+ * @param targetClaimId Target claim identifier
+ * @param targetPlayer Requested player target
  */
 async function handleTrustCommand(sender: Player, manager: LandClaimManager, isAdmin: boolean, isTrust: boolean, targetClaimId?: string, targetPlayer?: string): Promise<void> {
     const actionName = isTrust ? "trust" : "untrust";
     if (!targetClaimId || !targetPlayer) {
-        sender.sendMessage(`§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}landclaim ${actionName} <claimId> <player>`);
+        sender.sendMessage(`§o§c[Paradox] Please provide a Claim ID and player name/ID. Usage: {prefix}landclaim ${actionName} <claimId|player> <targetPlayer>`);
         return;
     }
 
@@ -1166,29 +1308,54 @@ async function handleTrustCommand(sender: Player, manager: LandClaimManager, isA
 
     if (isTrust) {
         const memberIdToSave = targetOnlinePlayer ? targetOnlinePlayer.id : targetPlayer;
-        const success = await manager.addMember(targetClaimId, memberIdToSave);
-        sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully trusted player "§a${targetPlayer}§7" on claim "§a${targetClaimId}§7".` : `§o§c[Paradox] Failed to add member to claim "${targetClaimId}".`);
+        const success = await manager.addMember(claim.id, memberIdToSave);
+        sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully trusted player "§a${targetPlayer}§7" on claim "§a${claim.id}§7".` : `§o§c[Paradox] Failed to add member to claim "${claim.id}".`);
     } else {
         const memberIdToRemove = targetOnlinePlayer && claim.members.includes(targetOnlinePlayer.id) ? targetOnlinePlayer.id : targetPlayer;
-        const success = await manager.removeMember(targetClaimId, memberIdToRemove);
-        sender.sendMessage(
-            success ? `§2[§7Paradox§2]§o§7 Successfully untrusted player "§a${targetPlayer}§7" from claim "§a${targetClaimId}§7".` : `§o§c[Paradox] Player "${targetPlayer}" is not listed as a trusted member of claim "${targetClaimId}".`
-        );
+        const success = await manager.removeMember(claim.id, memberIdToRemove);
+        sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully untrusted player "§a${targetPlayer}§7" from claim "§a${claim.id}§7".` : `§o§c[Paradox] Player "${targetPlayer}" is not listed as a trusted member of claim "${claim.id}".`);
     }
 }
 
 /**
- * Helper to handle the 'delete' subcommand.
+ * Deletes land claim by identifier or owner filter.
+ * @param sender Invoking player
+ * @param manager System manager reference
+ * @param isAdmin Permission flag
+ * @param targetClaimIdOrOwner Target claim identifier or owner name
  */
-async function handleDeleteCommand(sender: Player, manager: LandClaimManager, isAdmin: boolean, targetClaimId?: string): Promise<void> {
-    if (!targetClaimId) {
-        sender.sendMessage("§o§c[Paradox] Please provide a valid Claim ID to delete. Usage: {prefix}landclaim delete <claimId>");
+async function handleDeleteCommand(sender: Player, manager: LandClaimManager, isAdmin: boolean, targetClaimIdOrOwner?: string): Promise<void> {
+    if (!targetClaimIdOrOwner) {
+        sender.sendMessage("§o§c[Paradox] Please provide a valid Claim ID or Player Name to delete. Usage: {prefix}landclaim delete <claimId|playerName>");
         return;
     }
 
-    const claim = manager.getClaimById(targetClaimId);
+    // Attempt direct claim ID lookup first. This remains the most precise
+    // deletion target when a player owns multiple claims.
+    let claim = manager.getClaimById(targetClaimIdOrOwner);
+
     if (!claim) {
-        sender.sendMessage(`§o§c[Paradox] Claim "${targetClaimId}" could not be found.`);
+        // Offline owners can be resolved through the persistent owner index.
+        const claims = manager.getClaimsByOwner(targetClaimIdOrOwner);
+
+        if (claims.length === 0) {
+            sender.sendMessage(`§o§c[Paradox] No claims found matching "${targetClaimIdOrOwner}".`);
+            return;
+        }
+
+        if (claims.length > 1) {
+            const owner = manager.getClaimOwner(targetClaimIdOrOwner);
+            const ownerName = owner?.ownerName ?? targetClaimIdOrOwner;
+            const lines = [` `, `§2[§7Paradox§2]§o§7 Multiple claims found for "§a${ownerName}§7".`, `§7Select a specific Claim ID to delete:`, ...claims.map((c) => `  §2• §a${c.id} §7(Dim: §e${c.dimensionId.replace("minecraft:", "")}§7)`), ` `];
+            sender.sendMessage(lines.join("\n"));
+            return;
+        }
+
+        claim = claims[0];
+    }
+
+    if (!claim) {
+        sender.sendMessage(`§o§c[Paradox] No claims found matching "${targetClaimIdOrOwner}".`);
         return;
     }
 
@@ -1197,12 +1364,14 @@ async function handleDeleteCommand(sender: Player, manager: LandClaimManager, is
         return;
     }
 
-    const success = await manager.deleteClaim(targetClaimId);
-    sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully deleted land claim "§a${targetClaimId}§7". Corner markers removed.` : `§o§c[Paradox] Failed to delete land claim "${targetClaimId}".`);
+    const success = await manager.deleteClaim(claim.id);
+    sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully deleted land claim "§a${claim.id}§7" owned by "§a${claim.ownerName}§7". Corner markers removed.` : `§o§c[Paradox] Failed to delete land claim "${claim.id}".`);
 }
 
 /**
- * Helper to handle the 'info' subcommand.
+ * Sends detailed information regarding current position land claim.
+ * @param sender Invoking player
+ * @param manager System manager reference
  */
 function handleInfoCommand(sender: Player, manager: LandClaimManager): void {
     const transform = PlayerLocationCache.getTransform(sender);
@@ -1231,19 +1400,19 @@ function handleInfoCommand(sender: Player, manager: LandClaimManager): void {
 // COMMAND REGISTRATION & EXPORT
 // ==========================================
 
-/**
- * Command implementation for managing land claims (deleting, inspecting, member management, reconfiguration, and GUI integration).
- */
+/** Registered Chat/GUI Command Definition for land claiming system */
 export const claimCommand: Command = {
     name: "landclaim",
     description: "Manage, inspect, and configure access or limits for registered land claims.",
-    usage: "{prefix}landclaim <delete|list|online|info|trust|untrust|config> [targetPlayer|claimId] [value]",
+    usage: "{prefix}landclaim <delete|list|owners|online|info|trust|untrust|config> [targetPlayer|claimId] [value]",
     examples: [
-        `{prefix}landclaim trust claim_1700000000000_1234 Steve`,
-        `{prefix}landclaim untrust claim_1700000000000_1234 Steve`,
-        `{prefix}landclaim delete claim_1700000000000_1234`,
+        `{prefix}landclaim trust Steve_claim_1700000000000_1234 Steve`,
+        `{prefix}landclaim untrust Steve_claim_1700000000000_1234 Steve`,
+        `{prefix}landclaim delete Steve`,
+        `{prefix}landclaim delete Steve_claim_1700000000000_1234`,
         `{prefix}landclaim list`,
         `{prefix}landclaim list Steve`,
+        `{prefix}landclaim owners`,
         `{prefix}landclaim online`,
         `{prefix}landclaim info`,
         `{prefix}landclaim config enable`,
@@ -1313,6 +1482,15 @@ export const claimCommand: Command = {
                 generateModalForm: false,
             },
             {
+                name: "List All Claim Owners",
+                icon: "textures/ui/multiplayer_glyph.png",
+                securityClearance: 4,
+                command: ["owners"],
+                description: "Displays every player who owns registered claims, including offline players (Admin only)",
+                requiredFields: [],
+                generateModalForm: false,
+            },
+            {
                 name: "Trust Member",
                 icon: "textures/ui/icon_multiplayer.png",
                 command: ["trust"],
@@ -1330,9 +1508,9 @@ export const claimCommand: Command = {
             },
             {
                 name: "Delete Claim",
-                icon: "textures/ui/cancel.png",
+                icon: "textures/gui/newgui/trash.png",
                 command: ["delete"],
-                description: "Deletes a specified land claim by its ID",
+                description: "Deletes a specified land claim by its ID or player name",
                 requiredFields: ["claimId"],
                 generateModalForm: true,
             },
@@ -1372,7 +1550,7 @@ export const claimCommand: Command = {
         ],
         dynamicFields: [
             {
-                name: "\nSelect Claim ID:",
+                name: "\nSelect Claim ID or Player Name:",
                 type: "dropdown",
                 sourceType: "custom",
                 requiredFields: ["claimId"],
@@ -1400,10 +1578,9 @@ export const claimCommand: Command = {
     },
 
     /**
-     * Executes the claim command logic for chat and GUI interactions.
-     *
-     * @param message - The chat event payload.
-     * @param args - Subcommands and optional target parameters.
+     * Entry point for executing the landclaim command.
+     * @param message Event payload representing chat sending trigger
+     * @param args Parameter list appended to command name
      */
     execute: (message: ChatSendBeforeEvent | undefined, args?: string[]) => {
         if (!message || !args) {
@@ -1435,6 +1612,15 @@ export const claimCommand: Command = {
                 handleOnlineCommand(sender, manager);
                 break;
 
+            case "owners":
+            case "claimowners":
+                if (!isAdmin) {
+                    sender.sendMessage("§o§c[Paradox] You do not have clearance to inspect registered claim owners.");
+                    return;
+                }
+                handleOwnersCommand(sender, manager);
+                break;
+
             case "":
             case undefined:
             case "list":
@@ -1461,7 +1647,7 @@ export const claimCommand: Command = {
                 break;
 
             default:
-                sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, online, trust, untrust, delete, info, config");
+                sender.sendMessage("§o§c[Paradox] Unknown subcommand. Available subcommands: list, owners, online, trust, untrust, delete, info, config");
                 break;
         }
     },
