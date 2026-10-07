@@ -1578,7 +1578,7 @@ export const claimCommand: Command = {
                 requiredFields: ["deleteTarget"],
             },
             {
-                name: "Or Enter Player Name / Claim ID (for Offline Players or Specific Claims):",
+                name: "\nOr Enter Player Name / Claim ID (for Offline Players or Specific Claims):",
                 type: "text",
                 placeholder: "e.g., Steve or Steve_claim_12345",
                 requiredFields: ["deleteTarget"],
