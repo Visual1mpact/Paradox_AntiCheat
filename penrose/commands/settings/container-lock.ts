@@ -122,7 +122,7 @@ async function handleViewShared(player: Player): Promise<void> {
     }
 
     player.sendMessage("§2[§7Paradox§2]§o§7 Players with access:");
-    [...sharedPlayers].forEach((p, i) => player.sendMessage(` §8[${i + 1}] §f${p}`));
+    [...sharedPlayers].forEach((p, i) => player.sendMessage(` §b[${i + 1}] §f${p}`));
 }
 
 /**
@@ -147,7 +147,7 @@ async function handleChestLookup(player: Player, inputArg: string, normalizedArg
     if (chestData.accessLog?.length) {
         player.sendMessage("§2[§7Paradox§2]§o§7 Access Log (last 10 events):");
         chestData.accessLog.slice(-10).forEach((entry, i) => {
-            player.sendMessage(`  §8[${i + 1}] §fPlayer: ${entry.player} §7Time: §f${new Date(entry.time).toLocaleString()}`);
+            player.sendMessage(`  §b[${i + 1}] §fPlayer: ${entry.player} §7Time: §f${new Date(entry.time).toLocaleString()}`);
         });
     } else {
         player.sendMessage("§2[§7Paradox§2]§o§7 No access events recorded for this chest.");
@@ -180,7 +180,7 @@ async function handlePlayerLookup(player: Player, inputArg: string): Promise<voi
 
     player.sendMessage(`§2[§7Paradox§2]§o§7 Access Logs for player §f${inputArg}:`);
     logs.slice(-10).forEach((entry, i) => {
-        player.sendMessage(`  §8[${i + 1}] §7Chest: §f${entry.chest} §7Time: §f${new Date(entry.time).toLocaleString()}`);
+        player.sendMessage(`  §b[${i + 1}] §7Chest: §f${entry.chest} §7Time: §f${new Date(entry.time).toLocaleString()}`);
     });
 }
 

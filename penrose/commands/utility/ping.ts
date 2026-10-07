@@ -48,7 +48,7 @@ export const pingCommand: Command = {
 
             if (ping === undefined) {
                 pingDisplay = "§7Calculating...";
-                statusLabel = "§8[UNKNOWN]";
+                statusLabel = "§b[UNKNOWN]";
             } else {
                 let color = "§a"; // Excellent (< 50ms)
                 statusLabel = "§a[EXCELLENT]";
@@ -70,7 +70,7 @@ export const pingCommand: Command = {
                 pingDisplay = `${color}${ping}ms`;
             }
 
-            listOutput.push(`§7• §f${player.name.padEnd(16)} §8| ${pingDisplay.padStart(10)} §8| ${statusLabel}`);
+            listOutput.push(`§7• §f${player.name.padEnd(16)} §b| ${pingDisplay.padStart(10)} §b| ${statusLabel}`);
         }
 
         listOutput.push(`§2------------------------------`);

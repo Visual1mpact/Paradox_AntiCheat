@@ -170,7 +170,7 @@ export class GUIManager {
      * @returns {string} Formatted title with breadcrumbs in all caps
      */
     private renderTitle(currentTitle: string): string {
-        return `§8${this.breadcrumbs.join(" > ").toUpperCase()}\n§r§l${currentTitle}`;
+        return `§b${this.breadcrumbs.join(" > ").toUpperCase()}\n§r§l${currentTitle}`;
     }
 
     /**

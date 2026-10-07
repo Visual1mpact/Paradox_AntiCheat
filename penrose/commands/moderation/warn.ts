@@ -146,7 +146,7 @@ export const warnCommand: Command = {
             message.sender.sendMessage(`\n§2[§7Paradox§2]§o§7 Warnings for §f${playerName}§7:`);
             playerWarns.forEach((w: { reason: string; staff: string; timestamp: number }, i: number) => {
                 const date = new Date(w.timestamp).toLocaleDateString();
-                message.sender.sendMessage(` §7${i + 1}. §f${w.reason} §8- By: ${w.staff} (${date})`);
+                message.sender.sendMessage(` §7${i + 1}. §f${w.reason} §b- By: ${w.staff} (${date})`);
             });
         } else if (action === "clear") {
             if ((message.sender.getDynamicProperty("securityClearance") as number) < 4) {

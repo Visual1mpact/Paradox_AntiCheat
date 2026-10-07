@@ -84,7 +84,7 @@ function updateTpsHud() {
     }
 
     const title = `§2TPS: ${color}${currentTPS.toFixed(2)}`;
-    const subtitle = `§7Status: ${color}${status} §8| §7Target: §f20.0`;
+    const subtitle = `§7Status: ${color}${status} §b| §7Target: §f20.0`;
 
     for (const playerId of activeMonitors) {
         const player = PlayerCache.getPlayerById(playerId);

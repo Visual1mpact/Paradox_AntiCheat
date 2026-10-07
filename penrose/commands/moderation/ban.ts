@@ -79,7 +79,7 @@ export const banCommand: Command = {
                 message.sender.sendMessage("\n§2[§7Paradox§2]§o§7 Banned Players:");
                 names.forEach((name) => {
                     const reason = bannedPlayers[name]?.reason ?? "No reason";
-                    message.sender.sendMessage(` §o§7| [§f${name}§7] - §8${reason}`);
+                    message.sender.sendMessage(` §o§7| [§f${name}§7] - §b${reason}`);
                 });
             } else {
                 message.sender.sendMessage("§2[§7Paradox§2]§o§7 No players are currently banned.");

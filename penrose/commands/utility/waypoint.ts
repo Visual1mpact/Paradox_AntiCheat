@@ -416,7 +416,7 @@ function handleListWaypoints(player: Player, playerWaypoints: PlayerWaypoints, m
         const dimLabel = wp.dimension.replace("minecraft:", "").toUpperCase();
 
         listOutput.push(`§7• §f${wp.name}${activeTag}`);
-        listOutput.push(`  §8└─ §7Pos: §f${wp.location.x}§7, §f${wp.location.y}§7, §f${wp.location.z} §8| §e${dimLabel}`);
+        listOutput.push(`  §b└─ §7Pos: §f${wp.location.x}§7, §f${wp.location.y}§7, §f${wp.location.z} §b| §e${dimLabel}`);
     }
     listOutput.push(`§2------------------------------`);
     player.sendMessage(listOutput.join("\n"));

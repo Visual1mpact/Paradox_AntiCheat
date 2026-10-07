@@ -143,7 +143,7 @@ function getNearestMinecraftColorCode(color: RGBColor): string {
         { code: "§a", r: 85, g: 255, b: 85 },
         { code: "§9", r: 85, g: 85, b: 255 },
         { code: "§e", r: 255, g: 255, b: 85 },
-        { code: "§d", r: 255, g: 85, b: 255 },
+        { code: "§b", r: 255, g: 85, b: 255 },
         { code: "§b", r: 85, g: 255, b: 255 },
         { code: "§6", r: 255, g: 170, b: 0 },
         { code: "§5", r: 170, g: 0, b: 170 },
@@ -1283,9 +1283,9 @@ function handleOwnersCommand(sender: Player, manager: LandClaimManager): void {
     const lines: string[] = [` `, `§2[§7Paradox§2]§o§7 Registered Claim Owners (§a${owners.length}§7):`, `§7Owners shown here may be offline. UUID/ID is authoritative.`, ` `];
 
     for (const owner of owners) {
-        const status = onlineIds.has(owner.ownerUuid) ? "§aONLINE" : "§8OFFLINE";
+        const status = onlineIds.has(owner.ownerUuid) ? "§aONLINE" : "§cOFFLINE";
         const claimCount = owner.claimIds.size;
-        lines.push(`  §2• §f${owner.ownerName} §7[${status}§7] §7Claims: §e${claimCount} §7| ID: §8${owner.ownerUuid}`);
+        lines.push(`  §2• §f${owner.ownerName} §7[${status}§7] §7Claims: §e${claimCount} §7| ID: §b${owner.ownerUuid}`);
     }
 
     // Keep chat packets reasonably sized when a server has many claim owners.
@@ -1460,7 +1460,7 @@ export const claimCommand: Command = {
                 "§e§lWand Selection Setup:§r\n" +
                 "§7• Hold a §aGolden Hoe§7 and right-click §fCorner 1§7 to place the primary anchor.\n" +
                 "§7• Right-click §fCorner 2§7 to set the diagonal opposite boundary.\n" +
-                "§7• Claims extend automatically vertically from sky to bedrock (§8-64 to 320§7).\n" +
+                "§7• Claims extend automatically vertically from sky to bedrock (§b-64 to 320§7).\n" +
                 `§7• Minimum area: §a${config.MIN_SIZE}x${config.MIN_SIZE} blocks§7 (smaller areas rejected).\n` +
                 `§7• Player limit: §aMax ${config.MAX_CLAIMS_PER_PLAYER} active claims§7 per player.\n` +
                 `§7• Border buffer: Must maintain a §a${config.CLAIM_BUFFER || 5}-block buffer§7 from adjacent claims.\n\n` +

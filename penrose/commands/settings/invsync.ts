@@ -97,7 +97,7 @@ function renderAuditEvents(player: Player, events: AnomalyEvent[]): void {
             })
             .join(", ");
 
-        player.sendMessage(`  §8[${i + 1}] §fTime: ${new Date(e.time).toLocaleString()} §7Excess: §2[§7${items}§2]§o§7§f, §cTotal: ${e.totalExcess}`);
+        player.sendMessage(`  §b[${i + 1}] §fTime: ${new Date(e.time).toLocaleString()} §7Excess: §2[§7${items}§2]§o§7§f, §cTotal: ${e.totalExcess}`);
     });
 }
 

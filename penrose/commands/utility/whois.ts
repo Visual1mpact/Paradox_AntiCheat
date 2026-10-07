@@ -101,7 +101,7 @@ function formatHealth(target: Player): string {
     const percent = current / max;
     const bars = 10;
     const filled = Math.floor(percent * bars);
-    const healthBar = ` §8[§2${"|".repeat(filled)}§7${"|".repeat(bars - filled)}§8]`;
+    const healthBar = ` §b[§2${"|".repeat(filled)}§7${"|".repeat(bars - filled)}§b]`;
 
     return `§a${current}§7/§2${max}${healthBar}`;
 }

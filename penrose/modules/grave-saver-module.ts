@@ -281,7 +281,7 @@ export function startGraveSaver(): void {
                     /*
                      * Write the grave information to the sign.
                      */
-                    signComponent.setText(`§4[Grave]\n` + `§8${playerName}\n` + `§7Died at:\n` + `§8${deathX}, ${deathY}, ${deathZ}`);
+                    signComponent.setText(`§4[Grave]\n` + `§b${playerName}\n` + `§7Died at:\n` + `§b${deathX}, ${deathY}, ${deathZ}`);
 
                     /*
                      * Wax the sign so players cannot edit it.

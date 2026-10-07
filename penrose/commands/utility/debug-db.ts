@@ -101,7 +101,7 @@ export const debugDBCommand: Command = {
 
                 // Add total size info for the database
                 debugInfoText += `\n  - Total Size: ${totalSize}\n`;
-                debugInfoText += "§8-----------------------------§r\n";
+                debugInfoText += "§b-----------------------------§r\n";
             });
 
             // Truncate if too long for Minecraft UI (~32k char limit; we use ~30k buffer)

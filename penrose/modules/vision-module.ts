@@ -79,7 +79,7 @@ function renderInventory(player: Player, counts: Record<string, number>, state: 
     const pageEntries = entries.slice(start, start + ITEMS_PER_PAGE);
 
     let text = pageEntries.map(([name, amt]) => `§2[§f${name}§2]§7 Amount: §2x${amt}§f`).join("\n");
-    if (totalPages > 1) text += `\n§8Page ${state.page + 1} of ${totalPages}`;
+    if (totalPages > 1) text += `\n§bPage ${state.page + 1} of ${totalPages}`;
 
     player.onScreenDisplay.setActionBar(text);
 
