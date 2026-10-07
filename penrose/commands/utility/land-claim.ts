@@ -756,6 +756,24 @@ export class LandClaimManager {
     }
 
     /**
+     * Deletes all land claims associated with a given owner UUID or name.
+     * @param ownerUuidOrName Search criteria string for owner
+     */
+    public async deleteClaimsByOwner(ownerUuidOrName: string): Promise<number> {
+        const claimsToDelete = this.getClaimsByOwner(ownerUuidOrName);
+        let deletedCount = 0;
+
+        for (const claim of claimsToDelete) {
+            const success = await this.deleteClaim(claim.id);
+            if (success) {
+                deletedCount++;
+            }
+        }
+
+        return deletedCount;
+    }
+
+    /**
      * Adds dynamic trusted member entry to target claim permissions.
      * @param claimId Target claim ID
      * @param memberIdentifier Player UUID or account name
@@ -1319,6 +1337,7 @@ async function handleTrustCommand(sender: Player, manager: LandClaimManager, isA
 
 /**
  * Deletes land claim by identifier or owner filter.
+ * Supports deleting by online/offline player name or exact claim ID.
  * @param sender Invoking player
  * @param manager System manager reference
  * @param isAdmin Permission flag
@@ -1330,42 +1349,45 @@ async function handleDeleteCommand(sender: Player, manager: LandClaimManager, is
         return;
     }
 
-    // Attempt direct claim ID lookup first. This remains the most precise
-    // deletion target when a player owns multiple claims.
+    // Attempt direct claim ID lookup first.
     let claim = manager.getClaimById(targetClaimIdOrOwner);
 
-    if (!claim) {
-        // Offline owners can be resolved through the persistent owner index.
-        const claims = manager.getClaimsByOwner(targetClaimIdOrOwner);
-
-        if (claims.length === 0) {
-            sender.sendMessage(`§o§c[Paradox] No claims found matching "${targetClaimIdOrOwner}".`);
+    if (claim) {
+        if (claim.ownerUuid !== sender.id && !isAdmin) {
+            sender.sendMessage("§o§c[Paradox] You do not have permission to delete this claim.");
             return;
         }
 
-        if (claims.length > 1) {
-            const owner = manager.getClaimOwner(targetClaimIdOrOwner);
-            const ownerName = owner?.ownerName ?? targetClaimIdOrOwner;
-            const lines = [` `, `§2[§7Paradox§2]§o§7 Multiple claims found for "§a${ownerName}§7".`, `§7Select a specific Claim ID to delete:`, ...claims.map((c) => `  §2• §a${c.id} §7(Dim: §e${c.dimensionId.replace("minecraft:", "")}§7)`), ` `];
-            sender.sendMessage(lines.join("\n"));
-            return;
-        }
-
-        claim = claims[0];
+        const success = await manager.deleteClaim(claim.id);
+        sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully deleted land claim "§a${claim.id}§7" owned by "§a${claim.ownerName}§7". Corner markers removed.` : `§o§c[Paradox] Failed to delete land claim "${claim.id}".`);
+        return;
     }
 
-    if (!claim) {
+    // Fallback: Attempt owner lookup (works for both online and offline players).
+    const ownerClaims = manager.getClaimsByOwner(targetClaimIdOrOwner);
+
+    if (ownerClaims.length === 0) {
         sender.sendMessage(`§o§c[Paradox] No claims found matching "${targetClaimIdOrOwner}".`);
         return;
     }
 
-    if (claim.ownerUuid !== sender.id && !isAdmin) {
-        sender.sendMessage("§o§c[Paradox] You do not have permission to delete this claim.");
+    // Verify ownership permissions for all claims belonging to this owner.
+    const isOwnerSelf = ownerClaims.some((c) => c.ownerUuid === sender.id);
+    if (!isOwnerSelf && !isAdmin) {
+        sender.sendMessage("§o§c[Paradox] You do not have permission to delete claims owned by other players.");
         return;
     }
 
-    const success = await manager.deleteClaim(claim.id);
-    sender.sendMessage(success ? `§2[§7Paradox§2]§o§7 Successfully deleted land claim "§a${claim.id}§7" owned by "§a${claim.ownerName}§7". Corner markers removed.` : `§o§c[Paradox] Failed to delete land claim "${claim.id}".`);
+    const ownerRecord = manager.getClaimOwner(targetClaimIdOrOwner);
+    const resolvedOwnerName = ownerRecord?.ownerName ?? targetClaimIdOrOwner;
+
+    // Delete all claims matching the owner name/UUID.
+    const deletedCount = await manager.deleteClaimsByOwner(targetClaimIdOrOwner);
+    if (deletedCount > 0) {
+        sender.sendMessage(`§2[§7Paradox§2]§o§7 Successfully deleted ${deletedCount} land claim(s) owned by "§a${resolvedOwnerName}§7". Corner markers removed.`);
+    } else {
+        sender.sendMessage(`§o§c[Paradox] Failed to delete claims for player "§a${resolvedOwnerName}§7".`);
+    }
 }
 
 /**
@@ -1447,7 +1469,7 @@ export const claimCommand: Command = {
                 "§7• §fList My Claims:§7 Display all active land claims, world dimensions, and teleport markers registered to you.\n" +
                 "§7• §fTrust Member:§7 Grant interact, build, container, and entity access permissions to a specified player.\n" +
                 "§7• §fUntrust Member:§7 Immediately revoke all claim access and interaction permissions from a trusted user.\n" +
-                "§7• §fDelete Claim:§7 Permanently abandon an existing claim, release territory, and clear its corner markers.\n" +
+                "§7• §fDelete Claim:§7 Permanently abandon or remove claims by selecting online players or entering an offline player name/claim ID.\n" +
                 "§7• §fReconfigure Settings:§7 Modify runtime claim sizing, buffer zones, and player quotas (Requires Level 4 clearance).\n\n" +
                 "§c§lAdmin Overrides (Clearance Level 4+):§r\n" +
                 "§7• Admins can trust/untrust members on or delete claims owned by other players.\n" +
@@ -1510,8 +1532,8 @@ export const claimCommand: Command = {
                 name: "Delete Claim",
                 icon: "textures/gui/newgui/trash.png",
                 command: ["delete"],
-                description: "Deletes a specified land claim by its ID or player name",
-                requiredFields: ["claimId"],
+                description: "Deletes claims by choosing an online player or manually specifying an offline player name/claim ID",
+                requiredFields: ["deleteTarget"],
                 generateModalForm: true,
             },
             {
@@ -1549,6 +1571,18 @@ export const claimCommand: Command = {
             },
         ],
         dynamicFields: [
+            {
+                name: "\nSelect Online Player (or select 'Manual Input' below):",
+                type: "dropdown",
+                sourceType: "players",
+                requiredFields: ["deleteTarget"],
+            },
+            {
+                name: "Or Enter Player Name / Claim ID (for Offline Players or Specific Claims):",
+                type: "text",
+                placeholder: "e.g., Steve or Steve_claim_12345",
+                requiredFields: ["deleteTarget"],
+            },
             {
                 name: "\nSelect Claim ID or Player Name:",
                 type: "dropdown",
