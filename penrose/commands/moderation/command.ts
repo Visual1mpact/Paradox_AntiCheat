@@ -1,6 +1,8 @@
 import { ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { allCommands, commandHandler, disabledCommandsDB } from "../../event-listeners/world-initialize";
+import { disableAllActiveFreecam } from "../utility/freecam";
+import { disableAllActiveVanish } from "../moderation/vanish";
 
 interface DisabledMetadata {
     disabledBy: string;
@@ -155,6 +157,13 @@ async function processDisableCommand(commandName: string, registry: Command[], s
         disabledBy: senderName,
         timestamp: Date.now(),
     });
+
+    // Force-disable active sessions if specific commands are disabled
+    if (commandName === "freecam") {
+        disableAllActiveFreecam();
+    } else if (commandName === "vanish") {
+        disableAllActiveVanish();
+    }
 
     results.disabledCommands.push(commandName);
 }

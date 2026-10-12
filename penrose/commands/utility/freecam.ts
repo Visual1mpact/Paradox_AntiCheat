@@ -277,6 +277,21 @@ export function disable(player: Player): void {
 }
 
 /**
+ * Force-disables freecam for all currently active users when the command is globally disabled by staff.
+ */
+export function disableAllActiveFreecam(): void {
+    for (const playerId of Array.from(freecamUsers)) {
+        const player = PlayerCache.getPlayerById(playerId);
+        if (player) {
+            disable(player);
+            player.sendMessage("§2[§7Paradox§2]§o§7 Freecam has been globally disabled by staff.");
+        }
+    }
+    freecamUsers.clear();
+    cleanupActiveSession();
+}
+
+/**
  * Toggles freecam mode on or off for a given player, recording starting position
  * into dynamic properties and handling vanish state via Spectator game mode.
  *

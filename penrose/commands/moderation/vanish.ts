@@ -2,6 +2,26 @@ import { GameMode, Player, ChatSendBeforeEvent } from "@minecraft/server";
 import { Command } from "../../classes/core/command-handler";
 import { PlayerCache } from "../../classes/cache/player-cache";
 
+const vanishedUsers = new Set<string>();
+
+/**
+ * Force-disables vanish mode for all currently active users when the command is globally disabled by staff.
+ */
+export function disableAllActiveVanish(): void {
+    for (const playerId of Array.from(vanishedUsers)) {
+        const player = PlayerCache.getPlayerById(playerId);
+        if (player && player.isValid) {
+            const backupGameMode = player.getDynamicProperty("GameModeBackup");
+            if (backupGameMode !== undefined) {
+                player.setGameMode(backupGameMode as GameMode);
+                player.setDynamicProperty("GameModeBackup", undefined);
+            }
+            player.sendMessage("§2[§7Paradox§2]§o§7 Vanish has been globally disabled by staff.");
+        }
+    }
+    vanishedUsers.clear();
+}
+
 /**
  * Represents the vanish command.
  */
@@ -85,6 +105,8 @@ export const vanishCommand: Command = {
                 player.setDynamicProperty("GameModeBackup", playerGameMode);
                 player.setGameMode(GameMode.Spectator);
 
+                vanishedUsers.add(player.id);
+
                 // Send message indicating that vanish is enabled for the player
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish enabled!`);
 
@@ -97,6 +119,8 @@ export const vanishCommand: Command = {
                 const backupGameMode = player.getDynamicProperty("GameModeBackup");
                 player.setGameMode(backupGameMode as GameMode);
                 player.setDynamicProperty("GameModeBackup", undefined);
+
+                vanishedUsers.delete(player.id);
 
                 // Send message indicating that vanish is disabled for the player
                 player.sendMessage(`§2[§7Paradox§2]§o§7 Vanish disabled!`);
